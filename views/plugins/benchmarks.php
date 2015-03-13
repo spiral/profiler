@@ -17,7 +17,7 @@
             1000 => 'red'
         );
 
-        //TODO: Fix line size
+        $totalTime = microtime(true) - SPIRAL_INITIAL_TIME;
         foreach (\Spiral\Components\Debug\Debugger::getBenchmarks() as $record => $data)
         {
             if (!isset($data[2]))
@@ -26,7 +26,6 @@
             }
 
             $lineLength = 100 * ($data[2] - $data[0]) / PROFILER_TIME_ELAPSED;
-
             foreach ($colors as $length => $color)
             {
                 if ($lineLength < $length)
@@ -35,7 +34,10 @@
                 }
             }
 
-            $linePadding = 100 * ($data[0] - SPIRAL_INITIAL_TIME) / PROFILER_TIME_ELAPSED;
+            /**
+             * @var float $started
+             */
+            $linePadding = 100 * ($data[0] - $started) / PROFILER_TIME_ELAPSED;
 
             if ($linePadding > 100)
             {

@@ -10,9 +10,7 @@ namespace Spiral\Profiler;
 
 use Psr\Http\Message\ResponseInterface;
 use Spiral\Components\Debug\Debugger;
-use Spiral\Components\Debug\Logger;
 use Spiral\Components\Http\MiddlewareInterface;
-use Spiral\Components\Http\MiddlewareTrait;
 use Spiral\Components\Http\Request;
 use Spiral\Components\Http\Response;
 use Spiral\Components\Modules\Definition;
@@ -20,13 +18,14 @@ use Spiral\Components\Modules\Installer;
 use Spiral\Components\Modules\Module;
 use Spiral\Components\View\View;
 use Spiral\Components\View\ViewConfig;
+use Spiral\Core\Component\LoggerTrait;
 
 class Profiler extends Module implements MiddlewareInterface
 {
     /**
      * Nice looking handle() method.
      */
-    use MiddlewareTrait;
+    use LoggerTrait;
 
     /**
      * View component is required for rendering.
@@ -54,12 +53,12 @@ class Profiler extends Module implements MiddlewareInterface
      * @param object|null $context Pipeline context, can be HttpDispatcher, Route or module.
      * @return Response
      */
-    public function handle(Request $request, \Closure $next = null, $context = null)
+    public function __invoke(Request $request, \Closure $next = null, $context = null)
     {
         Debugger::benchmarking(true);
-
         $started = microtime(true);
 
+        self::logger()->info('Profiler module started.');
         $response = $next();
 
         $elapsed = microtime(true) - $started;

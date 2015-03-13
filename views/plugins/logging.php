@@ -43,7 +43,7 @@ SqlFormatter::$pre_attributes = '';
             <tr class="caller-<?= $message[0] ?> <?= $class ?>">
                 <td><b><?= $message[0] ?></b></td>
                 <td><?= strtoupper($message[2]) ?></td>
-                <td style="unicode-bidi: embed; white-space: pre;"><?= $message[3] ?></td>
+                <td style="unicode-bidi: embed; white-space: pre;" width="100%"><?= $message[3] ?></td>
             </tr>
         <?
         }
