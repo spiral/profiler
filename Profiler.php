@@ -10,6 +10,7 @@ namespace Spiral\Profiler;
 
 use Psr\Http\Message\ResponseInterface;
 use Spiral\Components\Debug\Debugger;
+use Spiral\Components\Http\Message\Stream;
 use Spiral\Components\Http\MiddlewareInterface;
 use Spiral\Components\Http\Request;
 use Spiral\Components\Http\Response;
@@ -19,6 +20,7 @@ use Spiral\Components\Modules\Module;
 use Spiral\Components\View\View;
 use Spiral\Components\View\ViewConfig;
 use Spiral\Core\Component\LoggerTrait;
+use Spiral\Helpers\StringHelper;
 
 class Profiler extends Module implements MiddlewareInterface
 {
@@ -72,12 +74,18 @@ class Profiler extends Module implements MiddlewareInterface
      *
      * @param Request                  $request Server request instance.
      * @param ResponseInterface|string $response
-     * @param float                    $elapsed Time when profiler was activated.
+     * @param float                    $started Time when profiler was activated.
      * @param float                    $elapsed Elapsed time.
      * @return mixed
      */
     protected function mount(Request $request, ResponseInterface $response, $started = 0.0, $elapsed = 0.0)
     {
+        if ($response->getHeader('Content-Type'))
+        {
+            //Profiler will not mount it's panel if content type is not empty
+            return $response;
+        }
+
         if ($response->getBody()->isWritable())
         {
             $panel = $this->view->render('profiler:panel', array(
