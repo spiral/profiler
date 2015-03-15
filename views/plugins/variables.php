@@ -2,7 +2,7 @@
     <div class="title top-title">Request Variables</div>
     <?
     /**
-     * @var \Spiral\Components\Http\Request $request
+     * @var \Psr\Http\Message\ServerRequestInterface $request
      */
     ?>
     <div class="clearfix">
