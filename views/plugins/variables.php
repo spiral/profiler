@@ -23,7 +23,14 @@
         <div style="width: 50%; float: left; display: inline-block;">
             <div class="small-title" style="margin-bottom: 10px;">SESSION</div>
             <?php
-            echo 'Not ready yet.'
+            if (empty($_SESSION))
+            {
+                echo 'Session is not started.';
+            }
+            else
+            {
+                dump($_SESSION);
+            }
             ?>
         </div>
     </div>
