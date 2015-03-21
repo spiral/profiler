@@ -16,7 +16,7 @@ use Spiral\Components\Http\Response;
 use Spiral\Components\Modules\Definition;
 use Spiral\Components\Modules\Installer;
 use Spiral\Components\Modules\Module;
-use Spiral\Components\View\View;
+use Spiral\Components\View\ViewManager;
 use Spiral\Components\View\ViewConfig;
 use Spiral\Core\Component\LoggerTrait;
 
@@ -30,16 +30,16 @@ class Profiler extends Module implements MiddlewareInterface
     /**
      * View component is required for rendering.
      *
-     * @var View
+     * @var ViewManager
      */
     protected $view = null;
 
     /**
      * New Profiler module instance.
      *
-     * @param View $view
+     * @param ViewManager $view
      */
-    public function __construct(View $view)
+    public function __construct(ViewManager $view)
     {
         $this->view = $view;
     }
