@@ -22,7 +22,7 @@ use Spiral\Facades\File;
         </table>
         <br/>
         <?php
-        if (!\Spiral\Components\View\View::getInstance()->getConfig()['caching']['enabled'])
+        if (!View::getConfig()['caching']['enabled'])
         {
             ?>
             <div class="error">
