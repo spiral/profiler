@@ -8,9 +8,10 @@ define('PROFILER_TIME_ELAPSED', max($elapsed, 0.001));
 ?>
 <!-- Profiler panel beginning. -->
 <div id="spiral-profiler">
+    <namespace path="self:plugins" name="plugin"/>
     <!-- Profiler visuals beginning. -->
-    <link rel="stylesheet" type="text/css"
-          href="@{basePath}resources/styles/profiler/profiler.css"/>
+
+    <link rel="stylesheet" type="text/css" href="@{basePath}resources/styles/profiler/profiler.css"/>
     <script type="text/javascript" src="@{basePath}resources/scripts/profiler/profiler.js"></script>
 
     <div id="dbg-prf" class="profiler">
@@ -21,6 +22,7 @@ define('PROFILER_TIME_ELAPSED', max($elapsed, 0.001));
             <div id="dbg-prf-option-elapsed" class="option elapsed">
                 <?= number_format(1000 * PROFILER_TIME_ELAPSED) ?> ms
             </div>
+
             <div id="dbg-prf-option-memory" class="option memory">
                 <?= StringHelper::formatBytes(memory_get_peak_usage()) ?>
             </div>
@@ -50,10 +52,10 @@ define('PROFILER_TIME_ELAPSED', max($elapsed, 0.001));
         <div id="dbg-prf-content" class="content">
             <div id="dbg-prf-content-option-close" class="option close option-close"></div>
             <div class="inner-modal">
-                <plugins.environment/>
-                <plugins.variables/>
-                <plugins.benchmarks/>
-                <plugins.logging/>
+                <plugin:environment/>
+                <plugin:variables/>
+                <plugin:benchmarks/>
+                <plugin:logging/>
             </div>
         </div>
         <div id="dbg-js-content" class="content">
