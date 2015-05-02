@@ -18,8 +18,11 @@ SqlFormatter::$pre_attributes = '';
         <tbody>
         <?
         $colors = array(
-            'warning' => 'yellow',
-            'error'   => 'red'
+            'warning'  => 'yellow',
+            'notice'   => 'yellow',
+            'critical' => 'red',
+            'alert'    => 'red',
+            'error'    => 'red'
         );
 
         foreach (Logger::logMessages() as $message)
@@ -43,7 +46,8 @@ SqlFormatter::$pre_attributes = '';
             <tr class="caller-<?= $message[0] ?> <?= $class ?>">
                 <td><b><?= $message[0] ?></b></td>
                 <td><?= strtoupper($message[2]) ?></td>
-                <td style="unicode-bidi: embed; white-space: pre;" width="100%"><?= $message[3] ?></td>
+                <td style="unicode-bidi: embed; white-space: pre;"
+                    width="100%"><?= $message[3] ?></td>
             </tr>
         <?
         }
