@@ -68,12 +68,12 @@ use Spiral\Facades\File;
                 <th colspan="3">Components</th>
             </tr>
             <?
-            //TODO: Change spl_object_hash to something else
-            foreach (Core::getBindings() as $component => $resolver)
+            $bindings = \Spiral\Core\Container::getInstance()->getBindings();
+            foreach ($bindings as $alias => $resolver)
             {
                 ?>
                 <tr>
-                    <td><?= $component ?></td>
+                    <td><?= $alias ?></td>
                     <td><?php
                         if (is_string($resolver))
                         {
