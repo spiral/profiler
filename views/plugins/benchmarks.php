@@ -18,8 +18,7 @@
         );
 
         $totalTime = microtime(true) - SPIRAL_INITIAL_TIME;
-        foreach (\Spiral\Components\Debug\Debugger::getInstance()->getBenchmarks() as $record =>
-                 $data)
+        foreach (\Spiral\Components\Debug\Debugger::getBenchmarks() as $record => $data)
         {
             if (!isset($data[2]))
             {
