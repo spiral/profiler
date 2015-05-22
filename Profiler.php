@@ -55,14 +55,12 @@ class Profiler extends Module implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, \Closure $next = null, $context = null)
     {
-        Debugger::benchmarking(true);
         $started = microtime(true);
 
         self::logger()->info('Profiler module started.');
         $response = $next();
 
         $elapsed = microtime(true) - $started;
-        Debugger::benchmarking(false);
 
         return $this->mount($request, $response, $started, $elapsed);
     }
