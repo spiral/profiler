@@ -1,22 +1,25 @@
 <?php
 use Spiral\Components\Debug\Logger;
 
-SqlFormatter::$pre_attributes = '';
+/**
+ * @var \Spiral\Profiler\Profiler $profiler
+ */
+
 ?>
 <div class="plugin" id="profiler-plugin-logging">
-    <div class="title top-title">Log Messages</div>
+    <div class="title top-title">[[Log Messages]]</div>
     <table id="debug-messages-table">
         <thead>
         <tr>
             <th>
                 <select id="debug-messages"></select>
             </th>
-            <th>Level</th>
-            <th>Message</th>
+            <th>[[Level]]</th>
+            <th>[[Message]]</th>
         </tr>
         </thead>
         <tbody>
-        <?
+        <?php
         $colors = array(
             'warning'  => 'yellow',
             'notice'   => 'yellow',
@@ -25,44 +28,44 @@ SqlFormatter::$pre_attributes = '';
             'error'    => 'red'
         );
 
-        foreach (Logger::logMessages() as $message)
+        foreach ($profiler->logMessages() as $message)
         {
             $class = '';
-            if (isset($colors[$message[2]]))
+            if (isset($colors[$message[Logger::MESSAGE_LEVEL]]))
             {
-                $class = $colors[$message[2]] . '-td';
-            }
-
-            //SQL queries from drivers
-            if (isset($message[4]['query']) && strpos($message[0], 'Spiral\Components\DBAL\Drivers') === 0)
-            {
-                $message[3] = SqlFormatter::highlight($message[3]);
-
-                //Removing PRE
-                $message[3] = trim(substr($message[3], 6, -6));
+                $class = $colors[$message[Logger::MESSAGE_LEVEL]] . '-td';
             }
 
             ?>
-            <tr class="caller-<?= $message[0] ?> <?= $class ?>">
-                <td><b><?= $message[0] ?></b></td>
-                <td><?= strtoupper($message[2]) ?></td>
-                <td style="unicode-bidi: embed; white-space: pre;"
-                    width="100%"><?= $message[3] ?></td>
+            <tr class="caller-<?= $message[Logger::MESSAGE_CONTAINER] ?> <?= $class ?>">
+                <td>
+                    <b><?= $message[Logger::MESSAGE_CONTAINER] ?></b>
+                </td>
+                <td>
+                    <?= strtoupper($message[Logger::MESSAGE_LEVEL]) ?>
+                </td>
+                <td style="unicode-bidi: embed; white-space: pre;" width="100%"><?
+                    echo $profiler->formatMessage(
+                        $message[Logger::MESSAGE_CONTAINER],
+                        $message[Logger::MESSAGE_BODY],
+                        $message[Logger::MESSAGE_CONTEXT]
+                    );
+                    ?>
+                </td>
             </tr>
-        <?
+        <?php
         }
 
-        if (!Logger::logMessages())
+        if (!$profiler->logMessages())
         {
             ?>
             <tr>
                 <td colspan="3" align="center" style="padding: 20px;">
-                    No logs recorded. :(
+                    [[No log messages were created while performing user request.]]
                 </td>
             </tr>
-        <?
+        <?php
         }
-
         ?>
         </tbody>
     </table>

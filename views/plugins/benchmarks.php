@@ -1,31 +1,35 @@
+<?php
+/**
+ * @var \Spiral\Profiler\Profiler $profiler
+ * @var float                     $started
+ */
+$colors = array(
+    2    => 'default',
+    30   => 'orange',
+    1000 => 'red'
+);
+?>
 <div class="plugin" id="profiler-plugin-benchmarks">
-    <div class="title top-title">Application Profiling</div>
-
+    <div class="title top-title">[[Application Profiling]]</div>
     <div class="flow" id="profiler-time-flow">
         <table>
             <thead>
             <tr>
-                <th style="width: 10%">Record</th>
-                <th>Timeline</th>
+                <th style="width: 10%">[[Record]]</th>
+                <th>[[Timeline]]</th>
             </tr>
             </thead>
         </table>
         <?php
-        $colors = array(
-            2    => 'default',
-            30   => 'orange',
-            1000 => 'red'
-        );
+        $benchmarks = $profiler->getBenchmarks($ending);
 
-        $totalTime = microtime(true) - SPIRAL_INITIAL_TIME;
-        foreach (\Spiral\Components\Debug\Debugger::getBenchmarks() as $record => $data)
+        $profilerOffset = (microtime(true) - SPIRAL_INITIAL_TIME);
+        $profilerFrame = $ending - $started;
+        $profilerScale = $profilerOffset / $profilerFrame;
+
+        foreach ($benchmarks as $record => $benchmark)
         {
-            if (!isset($data[2]))
-            {
-                continue;
-            }
-
-            $lineLength = 100 * ($data[2] - $data[0]) / PROFILER_TIME_ELAPSED;
+            $lineLength = 100 * (($benchmark['elapsed']) / $profilerFrame) / $profilerScale;
             foreach ($colors as $length => $color)
             {
                 if ($lineLength < $length)
@@ -34,46 +38,31 @@
                 }
             }
 
-            /**
-             * @var float $started
-             */
-            $linePadding = 100 * ($data[0] - $started) / PROFILER_TIME_ELAPSED;
-
-            if ($linePadding > 100)
+            $lineOffset = 100 * ($benchmark['started'] - $started) / $profilerFrame / $profilerScale;
+            if ($lineOffset + $lineLength > 100)
             {
-                continue;
+                $lineLength = 100 - $lineOffset;
             }
 
-            $context = '';
-            if (strpos($record, '|') !== false)
-            {
-                list($record, $context) = explode('|', $record);
-            }
             ?>
-            <div class="timeline clearfix"
-                 onclick="this.setAttribute('status', this.getAttribute('status') == 'open' ? 'closed' : 'open')"
-                 status="closed">
+            <div class="timeline clearfix" onclick="this.setAttribute('status', this.getAttribute('status') == 'open' ? 'closed' : 'open')" status="closed">
                 <div class="clearfix">
-                    <div class="name"><?= $record ?></div>
+                    <div class="name"><?= $benchmark['name'] ?></div>
                     <div class="time <?= !empty($color) ? 'time-' . $color : '' ?>">
-                        <div
-                            style="margin-left: <?= $linePadding ?>%; width: <?= $lineLength ?>%;"></div>
+                        <div style="margin-left: <?= $lineOffset ?>%; width: <?= $lineLength ?>%;"></div>
                     </div>
                 </div>
                 <div class="details clearfix">
-                    <strong style="float: right;">
-                        <?= !empty($context) ? 'Context: ' . $context : '' ?>
-                    </strong>
-                    <strong>Record: <?= $record ?></strong>
+                    <div style="unicode-bidi: embed; white-space: pre;"><?= $benchmark['context'] ?></div>
                     <br>
 
-                    <p style="float: right;">
-                        Memory: <?= \spiral\helpers\StringHelper::formatBytes($data[3] - $data[1]) ?>
-                    </p>
+                    <div style="float: right; color: #33a3fe">
+                        [[Memory:]] <?= \spiral\helpers\StringHelper::formatBytes($benchmark['memory']) ?>
+                    </div>
 
-                    <p>
-                        Elapsed: ~<?= number_format(($data[2] - $data[0]) * 1000) ?> ms
-                    </p>
+                    <div style="font-weight: bold;">
+                        [[Elapsed:]] ~<?= number_format($benchmark['elapsed'] * 1000) ?> [[ms]]
+                    </div>
                 </div>
             </div>
         <?php

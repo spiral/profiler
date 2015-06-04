@@ -11,22 +11,24 @@ namespace Spiral\Profiler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Spiral\Components\Debug\Debugger;
+use Spiral\Components\Debug\Logger;
 use Spiral\Components\Http\MiddlewareInterface;
 use Spiral\Components\Http\Response;
 use Spiral\Components\Modules\Definition;
 use Spiral\Components\Modules\Installer;
 use Spiral\Components\Modules\Module;
+use Spiral\Components\View\ConfigWriter\ViewConfig;
 use Spiral\Components\View\ViewManager;
-use Spiral\Components\View\ViewConfig;
-use Spiral\Core\Component\LoggerTrait;
 
 class Profiler extends Module implements MiddlewareInterface
 {
     /**
-     * Nice looking handle() method.
+     * Constants used to describe benchmark records.
      */
-    use LoggerTrait;
-
+    const BENCHMARK_STARTED        = 0;
+    const BENCHMARK_ENDED          = 2;
+    const BENCHMARK_MEMORY_STARTED = 1;
+    const BENCHMARK_MEMORY_ENDED   = 3;
     /**
      * View component is required for rendering.
      *
@@ -50,16 +52,18 @@ class Profiler extends Module implements MiddlewareInterface
      *
      * @param ServerRequestInterface $request Server request instance.
      * @param \Closure               $next    Next middleware/target.
-     * @param object|null            $context Pipeline context, can be HttpDispatcher, Route or module.
-     * @return Response
+     * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, \Closure $next = null, $context = null)
+    public function __invoke(ServerRequestInterface $request, \Closure $next = null)
     {
+        if ($request->getAttribute('profiler'))
+        {
+            //Already handled at top level
+            return $next($request);
+        }
+
         $started = microtime(true);
-
-        self::logger()->info('Profiler module started.');
-        $response = $next();
-
+        $response = $next($request->withAttribute('profiler', $started));
         $elapsed = microtime(true) - $started;
 
         return $this->mount($request, $response, $started, $elapsed);
@@ -74,7 +78,12 @@ class Profiler extends Module implements MiddlewareInterface
      * @param float                    $elapsed Elapsed time.
      * @return mixed
      */
-    protected function mount(ServerRequestInterface $request, ResponseInterface $response, $started = 0.0, $elapsed = 0.0)
+    protected function mount(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        $started = 0.0,
+        $elapsed = 0.0
+    )
     {
         if ($response->getHeader('Content-Type'))
         {
@@ -85,15 +94,85 @@ class Profiler extends Module implements MiddlewareInterface
         if ($response->getBody()->isWritable())
         {
             $panel = $this->view->render('profiler:panel', array(
-                'request' => $request,
-                'started' => $started,
-                'elapsed' => $elapsed
+                'profiler' => $this,
+                'request'  => $request,
+                'started'  => $started,
+                'elapsed'  => $elapsed
             ));
 
             $response->getBody()->write($panel);
         }
 
         return $response;
+    }
+
+    /**
+     * Get log messages fetched.
+     *
+     * @return array
+     */
+    public function logMessages()
+    {
+        return Logger::logMessages();
+    }
+
+    /**
+     * Benchmarks will be returned in normalized form.
+     *
+     * @param float $lastEnding Last found ending.
+     * @return array|null
+     */
+    public function getBenchmarks(&$lastEnding = null)
+    {
+        $result = array();
+        foreach (Debugger::getBenchmarks() as $record => $benchmark)
+        {
+            if (!isset($benchmark[self::BENCHMARK_ENDED]))
+            {
+                continue;
+            }
+
+            $elapsed = $benchmark[self::BENCHMARK_ENDED] - $benchmark[self::BENCHMARK_STARTED];
+            $memory = $benchmark[self::BENCHMARK_MEMORY_ENDED] - $benchmark[self::BENCHMARK_MEMORY_STARTED];
+
+            $name = $record;
+            $context = '';
+            if (strpos($record, '|') !== false)
+            {
+                list($name, $context) = explode('|', $record);
+            }
+
+            $result[$record] = array(
+                'name'    => $name,
+                'started' => $benchmark[self::BENCHMARK_STARTED],
+                'ended'   => $lastEnding = $benchmark[self::BENCHMARK_ENDED],
+                'elapsed' => $elapsed,
+                'memory'  => $memory,
+                'context' => $context
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Format message based on log container name.
+     *
+     * @param string $container
+     * @param string $message
+     * @param array  $context
+     * @return string
+     */
+    public function formatMessage($container, $message, $context)
+    {
+        \SqlFormatter::$pre_attributes = '';
+        if (strpos($container, 'Spiral\Components\DBAL\Drivers') === 0 && isset($context['query']))
+        {
+            //SQL queries from drivers
+            return trim(substr(\SqlFormatter::highlight($message), 6, -6));
+        }
+
+        return $message;
     }
 
     /**
@@ -111,7 +190,7 @@ class Profiler extends Module implements MiddlewareInterface
         //Registering view namespace
         $installer->registerConfig(ViewConfig::make(array(
             'baseDirectory' => $definition->getLocation()
-        ))->addNamespace('profiler', 'views'));
+        ))->registerNamespace('profiler', 'views'));
 
         //Public resources
         $installer->registerDirectory('/', 'public');

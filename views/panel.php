@@ -4,13 +4,11 @@ use Spiral\Helpers\StringHelper;
 /**
  * @var float $elapsed
  */
-define('PROFILER_TIME_ELAPSED', max($elapsed, 0.001));
+$elapsed = max($elapsed, 0.001);
 ?>
 <!-- Profiler panel beginning. -->
 <div id="spiral-profiler">
-    <namespace path="self:plugins" name="plugin"/>
-    <!-- Profiler visuals beginning. -->
-
+    <namespace path="self:plugins" name="plugins"/>
     <link rel="stylesheet" type="text/css" href="@{basePath}resources/styles/profiler/profiler.css"/>
     <script type="text/javascript" src="@{basePath}resources/scripts/profiler/profiler.js"></script>
 
@@ -20,7 +18,7 @@ define('PROFILER_TIME_ELAPSED', max($elapsed, 0.001));
 
         <div id="dbg-prf-options" class="options">
             <div id="dbg-prf-option-elapsed" class="option elapsed">
-                <?= number_format(1000 * PROFILER_TIME_ELAPSED) ?> ms
+                <?= number_format(1000 * $elapsed) ?> [[ms]]
             </div>
 
             <div id="dbg-prf-option-memory" class="option memory">
@@ -28,21 +26,16 @@ define('PROFILER_TIME_ELAPSED', max($elapsed, 0.001));
             </div>
 
             <!-- Plugins. -->
-            <div id="dbg-profiler-plugin-environment" class="option environment"
-                 plugin="environment">
-                <a title="Environment"></a>
-            </div>
-
-            <div id="dbg-profiler-plugin-variables" class="option variables" plugin="variables">
-                <a title="Request Variables"></a>
+            <div id="dbg-profiler-plugin-environment" class="option environment" plugin="environment">
+                <a title="[[Environment]]"></a>
             </div>
 
             <div id="dbg-profiler-plugin-benchmarks" class="option benchmarks" plugin="benchmarks">
-                <a title="Application Profiling"></a>
+                <a title="[[Application Profiling]]"></a>
             </div>
 
             <div id="dbg-profiler-plugin-logging" class="option logging" plugin="logging">
-                <a title="Log Messages"></a>
+                <a title="[[Log Messages]]"></a>
             </div>
             <!-- End of Plugins. -->
 
@@ -52,10 +45,9 @@ define('PROFILER_TIME_ELAPSED', max($elapsed, 0.001));
         <div id="dbg-prf-content" class="content">
             <div id="dbg-prf-content-option-close" class="option close option-close"></div>
             <div class="inner-modal">
-                <plugin:environment/>
-                <plugin:variables/>
-                <plugin:benchmarks/>
-                <plugin:logging/>
+                <plugins:environment/>
+                <plugins:benchmarks/>
+                <plugins:logging/>
             </div>
         </div>
         <div id="dbg-js-content" class="content">

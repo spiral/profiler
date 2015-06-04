@@ -1,47 +1,70 @@
-<?
-use Spiral\Core\Core;
-use Spiral\Core\Loader;
-use Spiral\Facades\View;
-use Spiral\Facades\File;
-
+<?php
+/**
+ * Environment definition requires some components.
+ */
+$container = \Spiral\Core\Container::getInstance();
+$loader = \Spiral\Core\Loader::getInstance();
+$http = \Spiral\Components\Http\HttpDispatcher::getInstance();
+$view = \Spiral\Components\View\ViewManager::getInstance();
+$file = \Spiral\Components\Files\FileManager::getInstance();
 ?>
 <div class="plugin" id="profiler-plugin-environment">
-    <div class="title top-title">Spiral Environment, PHP (<?= phpversion() ?>)</div>
+    <div class="title top-title">[[Spiral Environment]], PHP (<?= phpversion() ?>)</div>
     <div style="width: 40%; float: left; display: inline-block;">
-        <table>
-            <tbody>
-            <tr>
-                <th colspan="3">Active HTTP Routes</th>
-            </tr>
-            <?
-            if (false)
-            {
-            }
-            ?>
-            </tbody>
-        </table>
-        <br/>
         <?php
-        if (!View::getConfig()['caching']['enabled'])
+        if (!$view->getConfig()['caching']['enabled'])
         {
             ?>
             <div class="error">
-                View cache is disabled, this will slow down your application a lot. Do not forget to
-                turn view cache on
-                later.<br/>
-                Cache flag located in <b>application/config/view.php</b> configuration
-                file.
+                [[View cache is disabled, this will slow down your application a lot.]]
+                [[Do not forget to turn view cache on later.]]<br/>
+                [[Cache flag located in <b>application/config/view.php</b> configuration file.]]
             </div>
-        <?
+        <?php
         }
         ?>
         <table>
             <tbody>
             <tr>
-                <th colspan="3">View Namespaces</th>
+                <th colspan="3">[[Active HTTP Routes]]</th>
             </tr>
-            <?
-            foreach (View::getNamespaces() as $name => $directories)
+            <?php
+            foreach ($http->getRouter()->getRoutes() as $route)
+            {
+                ?>
+                <tr>
+                    <td>
+                        <b><?= $route->getName() ?></b>
+                    </td>
+                    <td>
+                        <?php
+                        if ($route instanceof \Spiral\Components\Http\Router\AbstractRoute)
+                        {
+                            echo e($route->getPattern());
+                        }
+                        else
+                        {
+                            echo '-';
+                        }
+                        ?>
+                    </td>
+                    <td>
+                        <?= get_class($route); ?>
+                    </td>
+                </tr>
+            <?php
+            }
+            ?>
+            </tbody>
+        </table>
+        <br/>
+        <table>
+            <tbody>
+            <tr>
+                <th colspan="3">[[View Namespaces]]</th>
+            </tr>
+            <?php
+            foreach ($view->getNamespaces() as $name => $directories)
             {
                 foreach ($directories as $directory)
                 {
@@ -51,7 +74,7 @@ use Spiral\Facades\File;
                             <b><?= $name ?></b>
                         </td>
                         <td>
-                            <?= File::normalizePath($directory) ?>
+                            <?= $file->normalizePath($directory) ?>
                         </td>
                     </tr>
                     <?php
@@ -65,16 +88,17 @@ use Spiral\Facades\File;
         <table>
             <tbody>
             <tr>
-                <th colspan="3">Components</th>
+                <th colspan="3">[[Components]]</th>
             </tr>
-            <?
-            $bindings = \Spiral\Core\Container::getInstance()->getBindings();
-            foreach ($bindings as $alias => $resolver)
+            <?php
+            $classIDs = array();
+            foreach ($container->getBindings() as $alias => $resolver)
             {
                 ?>
                 <tr>
                     <td><?= $alias ?></td>
-                    <td><?php
+                    <td>
+                        <?php
                         if (is_string($resolver))
                         {
                             echo e($resolver);
@@ -90,10 +114,17 @@ use Spiral\Facades\File;
                         ?>
                     </td>
                     <td>
-                        <?
+                        <?php
                         if (is_object($resolver))
                         {
-                            echo strtoupper(substr(spl_object_hash($resolver), 13, 3));
+                            //Resolving unique object id
+                            if (!isset($classIDs[spl_object_hash($resolver)]))
+                            {
+                                $classIDs[spl_object_hash($resolver)] = count($classIDs) + 16;
+                            }
+
+                            $classID = $classIDs[spl_object_hash($resolver)];
+                            echo strtoupper(dechex($classID));
                         }
                         else
                         {
@@ -102,7 +133,7 @@ use Spiral\Facades\File;
                         ?>
                     </td>
                 </tr>
-            <?
+            <?php
             }
             ?>
             </tbody>
@@ -111,26 +142,25 @@ use Spiral\Facades\File;
         <table>
             <tbody>
             <tr>
-                <th colspan="2">Server Options</th>
+                <th colspan="2">[[Server Options]]</th>
             </tr>
             <?
-
             $serverVariables = array(
-                'IP ADDRESS'    => 'SERVER_ADDR',
-                'SOFTWARE'      => 'SERVER_SOFTWARE',
-                'DOCUMENT ROOT' => 'DOCUMENT_ROOT',
-                'PROTOCOL'      => 'SERVER_PROTOCOL'
+                '[[IP ADDRESS]]'    => 'SERVER_ADDR',
+                '[[SOFTWARE]]'      => 'SERVER_SOFTWARE',
+                '[[DOCUMENT ROOT]]' => 'DOCUMENT_ROOT',
+                '[[PROTOCOL]]'      => 'SERVER_PROTOCOL'
             );
 
             $phpVariables = array(
-                'PHP EXPOSING'           => '(bool)expose_php',
-                'EXTENSIONS DIRECTORY'   => 'extension_dir',
-                'FILE UPLOADS'           => '(bool)file_uploads',
-                'FILE UPLOADS DIRECTORY' => 'upload_tmp_dir',
-                'POST DATA SIZE LIMIT'   => 'post_max_size',
-                'MAX FILESIZE'           => 'upload_max_filesize',
-                'MEMORY LIMIT'           => 'memory_limit',
-                'TIME LIMIT'             => 'max_execution_time'
+                '[[PHP EXPOSING]]'           => '(bool)expose_php',
+                '[[EXTENSIONS DIRECTORY]]'   => 'extension_dir',
+                '[[FILE UPLOADS]]'           => '(bool)file_uploads',
+                '[[FILE UPLOADS DIRECTORY]]' => 'upload_tmp_dir',
+                '[[POST DATA SIZE LIMIT]]'   => 'post_max_size',
+                '[[MAX FILESIZE]]'           => 'upload_max_filesize',
+                '[[MEMORY LIMIT]]'           => 'memory_limit',
+                '[[TIME LIMIT]]'             => 'max_execution_time'
             );
 
             foreach ($serverVariables as $title => $variable)
@@ -142,7 +172,7 @@ use Spiral\Facades\File;
                         <td align="right"><?= str_replace(' ', '&nbsp;', $title) ?></td>
                         <td><?= $_SERVER[$variable] ?></td>
                     </tr>
-                <?
+                <?php
                 }
             }
 
@@ -154,7 +184,9 @@ use Spiral\Facades\File;
                 {
                     if (!strncasecmp($variable, '(bool)', 6))
                     {
-                        $value = $phpEnvironment[$variableName]['local_value'] ? '<b>TRUE</b>' : '<b>FALSE</b>';
+                        $value = $phpEnvironment[$variableName]['local_value']
+                            ? '<b>[[TRUE]]</b>'
+                            : '<b>[[FALSE]]</b>';
                     }
                     else
                     {
@@ -165,7 +197,7 @@ use Spiral\Facades\File;
                         <td align="right"><?= str_replace(' ', '&nbsp;', $title) ?></td>
                         <td><?= $value ?></td>
                     </tr>
-                <?
+                <?php
                 }
             }
             ?>
@@ -175,9 +207,9 @@ use Spiral\Facades\File;
         <table>
             <tbody>
             <tr>
-                <th colspan="3">Available extensions</th>
+                <th colspan="3">[[Available extensions]]</th>
             </tr>
-            <?
+            <?php
             $extensions = get_loaded_extensions();
             while ($extension = next($extensions))
             {
@@ -187,7 +219,7 @@ use Spiral\Facades\File;
                     <td><?= next($extensions) ?></td>
                     <td><?= next($extensions) ?></td>
                 </tr>
-            <?
+            <?php
             }
             ?>
             </tbody>
@@ -198,35 +230,37 @@ use Spiral\Facades\File;
             <table>
                 <tbody>
                 <tr>
-                    <th colspan="2">Classes</th>
+                    <th colspan="2">[[Loaded Classes]]</th>
                 </tr>
                 <?php
 
-                $application = File::normalizePath(directory('application'));
-                $libraries = File::normalizePath(directory('libraries'));
-                $framework = File::normalizePath(directory('framework'));
+                $application = $file->normalizePath(directory('application'));
+                $libraries = $file->normalizePath(directory('libraries'));
+                $framework = $file->normalizePath(directory('framework'));
 
-                foreach (Loader::getInstance()->getClasses() as $class => $filename)
+                foreach ($loader->getClasses() as $class => $filename)
                 {
-                    $filename = File::normalizePath($filename);
+                    $filename = $file->normalizePath($filename);
 
-                    $color = false;
-
+                    $color = '';
                     if (strpos($filename, $application) === 0)
                     {
                         $color = 'blue';
                     }
 
-                    if (strpos($filename, $libraries) === 0 && strpos($filename, $framework) === false)
+                    if (
+                        strpos($filename, $libraries) === 0
+                        && strpos($filename, $framework) === false
+                    )
                     {
                         $color = 'yellow';
                     }
                     ?>
                     <tr class="<?= $color ? $color . '-td' : '' ?>">
                         <td><?= $class ?></td>
-                        <td><?= File::relativePath($filename) ?></td>
+                        <td><?= $file->relativePath($filename) ?></td>
                     </tr>
-                <?
+                <?php
                 }
                 ?>
                 </tbody>
@@ -236,11 +270,10 @@ use Spiral\Facades\File;
             <table>
                 <tbody>
                 <tr>
-                    <th colspan="2">Included files</th>
+                    <th colspan="2">[[Included files]]</th>
                 </tr>
-                <?
-
-                $total = 0;
+                <?php
+                $totalSize = 0;
                 foreach (get_included_files() as $filename)
                 {
                     if (!file_exists($filename))
@@ -249,18 +282,18 @@ use Spiral\Facades\File;
                     }
 
                     $filesize = filesize($filename);
-                    $total += $filesize;
+                    $totalSize += $filesize;
                     ?>
                     <tr>
-                        <td><?= File::normalizePath($filename) ?></td>
+                        <td><?= $file->normalizePath($filename) ?></td>
                         <td align="right"><?= StringHelper::formatBytes($filesize) ?></td>
                     </tr>
-                <?
+                <?php
                 }
                 ?>
                 <tr>
                     <td align="right">TOTAL:</td>
-                    <td align="right"><?= StringHelper::formatBytes($total) ?></td>
+                    <td align="right"><?= StringHelper::formatBytes($totalSize) ?></td>
                 </tr>
                 </tbody>
             </table>

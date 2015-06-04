@@ -1,5 +1,4 @@
-// Clearfix
-
+//Clearfix
 .clearfix, .cf {
   *zoom: 1;
   &:before,
@@ -13,8 +12,7 @@
   }
 }
 
-// Sizing shortcuts
-
+//Sizing shortcuts
 .size(@width, @height) {
   width: @width;
   height: @height;
@@ -24,8 +22,7 @@
   .size(@size, @size);
 }
 
-// Placeholder text
-
+//Placeholder text
 .placeholder(@color: @placeholder-color) {
   &:-moz-placeholder {
     color: @color;
@@ -38,8 +35,7 @@
   }
 }
 
-//mixin for font-size
-
+//Font-size mixin
 .font-size(@sizeValue) {
   @remValue: (@sizeValue/10);
   @pxValue: (@sizeValue);
@@ -47,9 +43,8 @@
   font-size: ~"@{remValue}rem";
 }
 
-//mixin for line-height
-
-.line-height(@heightValue){
+//Line-height mixin
+.line-height(@heightValue) {
   @remValue: (@heightValue/10);
   @pxValue: (@heightValue);
   line-height: ~"@{pxValue}px";
