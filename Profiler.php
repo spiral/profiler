@@ -129,7 +129,8 @@ class Profiler extends Module implements MiddlewareInterface
         {
             if (!isset($benchmark[self::BENCHMARK_ENDED]))
             {
-                continue;
+                $benchmark[self::BENCHMARK_ENDED] = microtime(true);
+                $benchmark[self::BENCHMARK_MEMORY_ENDED] = memory_get_usage();
             }
 
             $elapsed = $benchmark[self::BENCHMARK_ENDED] - $benchmark[self::BENCHMARK_STARTED];
