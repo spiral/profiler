@@ -24,7 +24,7 @@ $colors = array(
         $benchmarks = $profiler->getBenchmarks($ending);
 
         $profilerOffset = (microtime(true) - SPIRAL_INITIAL_TIME);
-        $profilerFrame = $ending - $started;
+        $profilerFrame = max($ending - $started, 0.001);
         $profilerScale = $profilerOffset / $profilerFrame;
 
         foreach ($benchmarks as $record => $benchmark)
