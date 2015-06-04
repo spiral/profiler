@@ -61,7 +61,7 @@ use Spiral\Components\Debug\Logger;
             ?>
             <tr>
                 <td colspan="3" align="center" style="padding: 20px;">
-                    [[No log messages were created while performing user request.]]
+                    [[No log messages were created while performing this user request.]]
                 </td>
             </tr>
         <?php
