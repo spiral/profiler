@@ -458,6 +458,10 @@
     background: #ffd964;
 }
 
+.profiler .flow .time.time-blue > div {
+    background: #6fbeff;
+}
+
 .profiler .flow .details {
     border-top: 1px solid #efefef;
     width: 100%;

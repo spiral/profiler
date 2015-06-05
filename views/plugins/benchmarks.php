@@ -5,6 +5,7 @@
  */
 $colors = array(
     2    => 'default',
+    10   => 'blue',
     30   => 'orange',
     1000 => 'red'
 );
