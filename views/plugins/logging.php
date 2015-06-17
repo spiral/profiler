@@ -44,7 +44,7 @@ use Spiral\Components\Debug\Logger;
                 <td>
                     <?= strtoupper($message[Logger::MESSAGE_LEVEL]) ?>
                 </td>
-                <td style="unicode-bidi: embed; white-space: pre;" width="100%"><?
+                <td style="unicode-bidi: embed; white-space: pre;" width="100%"><?php
                     echo $profiler->formatMessage(
                         $message[Logger::MESSAGE_CONTAINER],
                         $message[Logger::MESSAGE_BODY],

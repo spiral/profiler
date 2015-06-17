@@ -144,7 +144,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             <tr>
                 <th colspan="2">[[Server Options]]</th>
             </tr>
-            <?
+            <?php
             $serverVariables = array(
                 '[[IP ADDRESS]]'    => 'SERVER_ADDR',
                 '[[SOFTWARE]]'      => 'SERVER_SOFTWARE',
