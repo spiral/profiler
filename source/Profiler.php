@@ -194,7 +194,7 @@ class Profiler extends Module implements MiddlewareInterface
         ))->registerNamespace('profiler', 'views'));
 
         //Public resources
-        $installer->registerDirectory('/', 'public');
+        $installer->registerDirectory('/', '../public');
 
         return $installer;
     }
