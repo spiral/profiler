@@ -13,7 +13,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Spiral\\Profiler\\": ""
+      "Spiral\\Profiler\\": "source/"
     }
   }
 }
