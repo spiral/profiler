@@ -93,12 +93,12 @@ class Profiler extends Module implements MiddlewareInterface
 
         if ($response->getBody()->isWritable())
         {
-            $panel = $this->view->render('profiler:panel', array(
+            $panel = $this->view->render('profiler:panel', [
                 'profiler' => $this,
                 'request'  => $request,
                 'started'  => $started,
                 'elapsed'  => $elapsed
-            ));
+            ]);
 
             $response->getBody()->write($panel);
         }
@@ -124,7 +124,7 @@ class Profiler extends Module implements MiddlewareInterface
      */
     public function getBenchmarks(&$lastEnding = null)
     {
-        $result = array();
+        $result = [];
         foreach (Debugger::getBenchmarks() as $record => $benchmark)
         {
             if (!isset($benchmark[self::BENCHMARK_ENDED]))
@@ -143,14 +143,14 @@ class Profiler extends Module implements MiddlewareInterface
                 list($name, $context) = explode('|', $record);
             }
 
-            $result[$record] = array(
+            $result[$record] = [
                 'name'    => $name,
                 'started' => $benchmark[self::BENCHMARK_STARTED],
                 'ended'   => $lastEnding = $benchmark[self::BENCHMARK_ENDED],
                 'elapsed' => $elapsed,
                 'memory'  => $memory,
                 'context' => $context
-            );
+            ];
         }
 
         return $result;
@@ -189,9 +189,9 @@ class Profiler extends Module implements MiddlewareInterface
         $installer = parent::getInstaller($definition);
 
         //Registering view namespace
-        $installer->registerConfig(ViewConfig::make(array(
+        $installer->registerConfig(ViewConfig::make([
             'baseDirectory' => $definition->getLocation()
-        ))->registerNamespace('profiler', 'views'));
+        ])->registerNamespace('profiler', 'views'));
 
         //Public resources
         $installer->registerDirectory('/', '../public');

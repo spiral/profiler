@@ -20,13 +20,13 @@ use Spiral\Components\Debug\Logger;
         </thead>
         <tbody>
         <?php
-        $colors = array(
+        $colors = [
             'warning'  => 'yellow',
             'notice'   => 'yellow',
             'critical' => 'red',
             'alert'    => 'red',
             'error'    => 'red'
-        );
+        ];
 
         foreach ($profiler->logMessages() as $message)
         {

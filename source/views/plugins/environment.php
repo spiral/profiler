@@ -91,7 +91,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 <th colspan="3">[[Components]]</th>
             </tr>
             <?php
-            $classIDs = array();
+            $classIDs = [];
             foreach ($container->getBindings() as $alias => $resolver)
             {
                 ?>
@@ -145,14 +145,14 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 <th colspan="2">[[Server Options]]</th>
             </tr>
             <?php
-            $serverVariables = array(
+            $serverVariables = [
                 '[[IP ADDRESS]]'    => 'SERVER_ADDR',
                 '[[SOFTWARE]]'      => 'SERVER_SOFTWARE',
                 '[[DOCUMENT ROOT]]' => 'DOCUMENT_ROOT',
                 '[[PROTOCOL]]'      => 'SERVER_PROTOCOL'
-            );
+            ];
 
-            $phpVariables = array(
+            $phpVariables = [
                 '[[PHP EXPOSING]]'           => '(bool)expose_php',
                 '[[EXTENSIONS DIRECTORY]]'   => 'extension_dir',
                 '[[FILE UPLOADS]]'           => '(bool)file_uploads',
@@ -161,7 +161,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 '[[MAX FILESIZE]]'           => 'upload_max_filesize',
                 '[[MEMORY LIMIT]]'           => 'memory_limit',
                 '[[TIME LIMIT]]'             => 'max_execution_time'
-            );
+            ];
 
             foreach ($serverVariables as $title => $variable)
             {

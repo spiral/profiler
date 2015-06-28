@@ -3,12 +3,12 @@
  * @var \Spiral\Profiler\Profiler $profiler
  * @var float                     $started
  */
-$colors = array(
+$colors = [
     2    => 'default',
     10   => 'blue',
     30   => 'orange',
     1000 => 'red'
-);
+];
 ?>
 <div class="plugin" id="profiler-plugin-benchmarks">
     <div class="title top-title">[[Application Profiling]]</div>
