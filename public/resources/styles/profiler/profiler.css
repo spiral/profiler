@@ -499,3 +499,55 @@
 .profiler .text-small {
   font-size: 10px;
 }
+.profiler .tabs-block {
+  *zoom: 1;
+}
+.profiler .tabs-block:before,
+.profiler .tabs-block:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.profiler .tabs-block:after {
+  clear: both;
+}
+.profiler .tabs-block .tab-navigation {
+  float: left;
+  width: 20%;
+}
+.profiler .tabs-block .tab-navigation ul {
+  margin: 0 0 20px;
+  padding: 0;
+}
+.profiler .tabs-block .tab-navigation li {
+  display: block;
+  margin-bottom: 10px;
+}
+.profiler .tabs-block .tab-navigation li a {
+  text-decoration: none;
+  display: block;
+  padding: 7px 10px 8px;
+  color: #464646;
+  border-bottom: 1px solid #efefef;
+}
+.profiler .tabs-block .tab-navigation li a.selected {
+  font-weight: bold;
+  color: #33a3fe;
+  pointer-events: none;
+}
+.profiler .tabs-block .tab-navigation li a:hover {
+  background: #efefef;
+}
+.profiler .tabs-block .tab-content {
+  width: 80%;
+  float: left;
+  padding-left: 20px;
+}
+.profiler .tabs-block .tab-block {
+  background: #efefef;
+  padding: 10px;
+  overflow: auto;
+}
+.profiler .tabs-block .tab-block.hide {
+  display: none;
+}
