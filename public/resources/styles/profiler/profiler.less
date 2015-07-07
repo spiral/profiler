@@ -12,6 +12,9 @@
 @spiral-red: #d33535;
 @spiral-yellow: #ffd964;
 
+// Values
+@narrowScreen : ~"screen and (max-width: 1200px)";
+
 .profiler {
   font-family: 'Helvetica', sans-serif;
   color: @spiral-dark;
@@ -41,6 +44,39 @@
   table {
     border-collapse: collapse;
     border-spacing: 0;
+    margin-bottom: 20px;
+
+    td {
+      word-break: break-all;
+      vertical-align: top;
+
+      &.nowrap {
+        white-space: nowrap;
+        word-break: normal;
+      }
+    }
+  }
+
+  .narrow-col {
+    width: 40%;
+    float: left;
+
+    @media @narrowScreen {
+      width: 100%;
+      float: none;
+    }
+  }
+
+  .wide-col {
+    width: 60%;
+    float: left;
+    padding: 10px 0 10px 10px;
+
+    @media @narrowScreen {
+      width: 100%;
+      float: none;
+      padding-left: 0;
+    }
   }
 
   .spiral-link {

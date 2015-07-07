@@ -10,7 +10,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
 ?>
 <div class="plugin" id="profiler-plugin-environment">
     <div class="title top-title">[[Spiral Environment]], PHP (<?= phpversion() ?>)</div>
-    <div style="width: 40%; float: left; display: inline-block;">
+    <div class="narrow-col">
         <?php
         if (!$view->getConfig()['caching']['enabled'])
         {
@@ -33,7 +33,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             {
                 ?>
                 <tr>
-                    <td>
+                    <td class="nowrap">
                         <b><?= $route->getName() ?></b>
                     </td>
                     <td>
@@ -57,7 +57,6 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             ?>
             </tbody>
         </table>
-        <br/>
         <table>
             <tbody>
             <tr>
@@ -70,7 +69,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 {
                     ?>
                     <tr>
-                        <td>
+                        <td class="nowrap">
                             <b><?= $name ?></b>
                         </td>
                         <td>
@@ -84,7 +83,6 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             ?>
             </tbody>
         </table>
-        <br/>
         <table>
             <tbody>
             <tr>
@@ -96,7 +94,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             {
                 ?>
                 <tr>
-                    <td><?= $alias ?></td>
+                    <td class="nowrap"><?= $alias ?></td>
                     <td>
                         <?php
                         if (is_string($resolver))
@@ -112,8 +110,9 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                             echo '<b class="text-blue">' . get_class($resolver) . '</b><br/>';
                         }
                         ?>
+
                     </td>
-                    <td>
+                    <td class="nowrap">
                         <?php
                         if (is_object($resolver))
                         {
@@ -138,7 +137,6 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             ?>
             </tbody>
         </table>
-        <br/>
         <table>
             <tbody>
             <tr>
@@ -169,7 +167,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 {
                     ?>
                     <tr>
-                        <td align="right"><?= str_replace(' ', '&nbsp;', $title) ?></td>
+                        <td align="right" class="nowrap"><?= str_replace(' ', '&nbsp;', $title) ?></td>
                         <td><?= $_SERVER[$variable] ?></td>
                     </tr>
                 <?php
@@ -203,7 +201,6 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             ?>
             </tbody>
         </table>
-        <br/>
         <table>
             <tbody>
             <tr>
@@ -225,78 +222,75 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             </tbody>
         </table>
     </div>
-    <div style="width: 60%; float: left; display: inline-block;">
-        <div style="padding: 10px; padding-top: 0;">
-            <table>
-                <tbody>
-                <tr>
-                    <th colspan="2">[[Loaded Classes]]</th>
-                </tr>
-                <?php
+    <div class="wide-col">
+        <table>
+            <tbody>
+            <tr>
+                <th colspan="2">[[Loaded Classes]]</th>
+            </tr>
+            <?php
 
-                $application = $file->normalizePath(directory('application'));
-                $libraries = $file->normalizePath(directory('libraries'));
-                $framework = $file->normalizePath(directory('framework'));
+            $application = $file->normalizePath(directory('application'));
+            $libraries = $file->normalizePath(directory('libraries'));
+            $framework = $file->normalizePath(directory('framework'));
 
-                foreach ($loader->getClasses() as $class => $filename)
+            foreach ($loader->getClasses() as $class => $filename)
+            {
+                $filename = $file->normalizePath($filename);
+
+                $color = '';
+                if (strpos($filename, $application) === 0)
                 {
-                    $filename = $file->normalizePath($filename);
+                    $color = 'blue';
+                }
 
-                    $color = '';
-                    if (strpos($filename, $application) === 0)
-                    {
-                        $color = 'blue';
-                    }
-
-                    if (
-                        strpos($filename, $libraries) === 0
-                        && strpos($filename, $framework) === false
-                    )
-                    {
-                        $color = 'yellow';
-                    }
-                    ?>
-                    <tr class="<?= $color ? $color . '-td' : '' ?>">
-                        <td><?= $class ?></td>
-                        <td><?= $file->relativePath($filename) ?></td>
-                    </tr>
-                <?php
+                if (
+                    strpos($filename, $libraries) === 0
+                    && strpos($filename, $framework) === false
+                )
+                {
+                    $color = 'yellow';
                 }
                 ?>
-                </tbody>
-            </table>
-
-            <br/>
-            <table>
-                <tbody>
-                <tr>
-                    <th colspan="2">[[Included files]]</th>
+                <tr class="<?= $color ? $color . '-td' : '' ?>">
+                    <td><?= $class ?></td>
+                    <td><?= $file->relativePath($filename) ?></td>
                 </tr>
-                <?php
-                $totalSize = 0;
-                foreach (get_included_files() as $filename)
+            <?php
+            }
+            ?>
+            </tbody>
+        </table>
+        <table>
+            <tbody>
+            <tr>
+                <th colspan="2">[[Included files]]</th>
+            </tr>
+            <?php
+            $totalSize = 0;
+            foreach (get_included_files() as $filename)
+            {
+                if (!file_exists($filename))
                 {
-                    if (!file_exists($filename))
-                    {
-                        continue;
-                    }
-
-                    $filesize = filesize($filename);
-                    $totalSize += $filesize;
-                    ?>
-                    <tr>
-                        <td><?= $file->normalizePath($filename) ?></td>
-                        <td align="right"><?= StringHelper::formatBytes($filesize) ?></td>
-                    </tr>
-                <?php
+                    continue;
                 }
+
+                $filesize = filesize($filename);
+                $totalSize += $filesize;
                 ?>
                 <tr>
-                    <td align="right">TOTAL:</td>
-                    <td align="right"><?= StringHelper::formatBytes($totalSize) ?></td>
+                    <td><?= $file->normalizePath($filename) ?></td>
+                    <td align="right" class="nowrap"><?= StringHelper::formatBytes($filesize) ?></td>
                 </tr>
-                </tbody>
-            </table>
-        </div>
+            <?php
+            }
+            ?>
+            <tr>
+                <td align="right">TOTAL:</td>
+                <td align="right" class="nowrap"><?= StringHelper::formatBytes($totalSize) ?></td>
+            </tr>
+            </tbody>
+        </table>
+
     </div>
 </div>
