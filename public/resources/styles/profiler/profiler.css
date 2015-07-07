@@ -80,7 +80,7 @@
 .profiler .wide-col {
   width: 60%;
   float: left;
-  padding: 10px 0 10px 10px;
+  padding-left: 10px;
 }
 @media screen and (max-width: 1200px) {
   .profiler .wide-col {
