@@ -30,6 +30,10 @@ $elapsed = max($elapsed, 0.001);
                 <a title="[[Environment]]"></a>
             </div>
 
+            <div id="dbg-profiler-plugin-variables" class="option variables" plugin="variables">
+                <a title="[[Application Variables]]"></a>
+            </div>
+
             <div id="dbg-profiler-plugin-benchmarks" class="option benchmarks" plugin="benchmarks">
                 <a title="[[Application Profiling]]"></a>
             </div>
@@ -46,6 +50,7 @@ $elapsed = max($elapsed, 0.001);
             <div id="dbg-prf-content-option-close" class="option close option-close"></div>
             <div class="inner-modal">
                 <plugins:environment/>
+                <plugins:variables/>
                 <plugins:benchmarks/>
                 <plugins:logging/>
             </div>
