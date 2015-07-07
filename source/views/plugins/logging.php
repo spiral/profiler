@@ -38,10 +38,10 @@ use Spiral\Components\Debug\Logger;
 
             ?>
             <tr class="caller-<?= $message[Logger::MESSAGE_CONTAINER] ?> <?= $class ?>">
-                <td>
+                <td class="nowrap">
                     <b><?= $message[Logger::MESSAGE_CONTAINER] ?></b>
                 </td>
-                <td>
+                <td class="nowrap">
                     <?= strtoupper($message[Logger::MESSAGE_LEVEL]) ?>
                 </td>
                 <td style="unicode-bidi: embed; white-space: pre;" width="100%"><?php
