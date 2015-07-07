@@ -544,8 +544,6 @@
   padding-left: 20px;
 }
 .profiler .tabs-block .tab-block {
-  background: #efefef;
-  padding: 10px;
   overflow: auto;
 }
 .profiler .tabs-block .tab-block.hide {

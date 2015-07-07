@@ -4,38 +4,86 @@
     /**
      * @var \Psr\Http\Message\ServerRequestInterface $request
      */
+
+    $session = \Spiral\Components\Session\SessionStore::getInstance();
     ?>
     <div class="tabs-block">
         <div class="tab-navigation">
-            <ul id="tabs">
+            <ul id="profiler-tabs">
                 <li>
-                    <a href="#tab1">First Tab</a>
+                    <b>[[Incoming Request]]</b>
                 </li>
                 <li>
-                    <a href="#tab2">Second Tab</a>
+                    <a href="#request-attributes">[[Attributes]]</a>
                 </li>
                 <li>
-                    <a href="#tab3">Third Tab</a>
+                    <a href="#request-headers">[[Headers]]</a>
+                </li>
+                <li>
+                    <a href="#request-query">[[Query]]</a>
+                </li>
+                <li>
+                    <a href="#request-data">[[Data]]</a>
+                </li>
+                <li>
+                    <a href="#request-cookies">[[Cookies]]</a>
+                </li>
+                <li>
+                    <a href="#request-files">[[Uploaded Files]]</a>
+                </li>
+                <li>
+                    <a href="#user-session">[[User Session]]</a>
+                </li>
+                <li>
+                    <b>[[Environment]]</b>
+                </li>
+                <li>
+                    <a href="#server-information">[[Server Information]]</a>
                 </li>
             </ul>
         </div>
         <div class="tab-content">
-            <div class="tab-block" id="tab1">
-                <pre>
- user@linux:~/files/blog> mysqldump --add-drop-table -h mysqlhostserver
- -u mysqlusername -p databasename (tablename tablename tablename) | bzip2
- -c > blog.bak.sql.bz2
+            <div class="tab-block" id="request-attributes">
+                <?php dump($request->getAttributes()) ?>
+            </div>
 
-Enter password: (enter your mysql password)
-user@linux~/files/blog>
-                </pre>
+            <div class="tab-block" id="request-data">
+                <?php dump($request->getParsedBody()) ?>
             </div>
-            <div class="tab-block" id="tab2">
-                lorem ipsum 2
+
+            <div class="tab-block" id="request-query">
+                <?php dump($request->getQueryParams()) ?>
             </div>
-            <div class="tab-block" id="tab3">
-                lorem ipsum 3
+
+            <div class="tab-block" id="request-headers">
+                <?php dump($request->getHeaders()) ?>
             </div>
+
+            <div class="tab-block" id="request-cookies">
+                <?php dump($request->getCookieParams()) ?>
+            </div>
+
+            <div class="tab-block" id="request-files">
+                <?php dump($request->getUploadedFiles()) ?>
+            </div>
+
+            <div class="tab-block" id="server-information">
+                <?php dump($request->getServerParams()) ?>
+            </div>
+
+            <div class="tab-block" id="user-session">
+                <?php
+                if (!$session->isStarted())
+                {
+                    echo "[[User session has not been started.]]";
+                }
+                else
+                {
+                    dump($session->all());
+                }
+                ?>
+            </div>
+
         </div>
     </div>
 </div>
