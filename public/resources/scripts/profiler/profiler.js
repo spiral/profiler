@@ -96,6 +96,7 @@ function init() {
     profilerPanels();
     otherActions();
     initTabs();
+    changeTableLine();
 }
 
 function otherActions() {
@@ -228,4 +229,25 @@ function getFirstChildWithTagName( element, tagName ) {
 function getHash( url ) {
     var hashPos = url.lastIndexOf ( '#' );
     return url.substring( hashPos + 1 );
+}
+
+function changeTableLine() {
+    var triggerLink = document.getElementById('trigger-link');
+    triggerLink.onclick = changeLinkClass;
+}
+
+function changeLinkClass() {
+    var triggerLink = document.getElementById('trigger-link');
+    var link = document.getElementById('trigger-link').className;
+    var div = document.getElementById('profiler-time-flow');
+
+        if ( link == "change-size narrow-size" ) {
+            triggerLink.className = "change-size origin-size";
+            div.className = 'flow'
+        } else {
+            triggerLink.className = "change-size narrow-size";
+            div.className = "flow narrow-size"
+        }
+
+    return false;
 }
