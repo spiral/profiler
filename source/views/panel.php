@@ -8,7 +8,7 @@ $elapsed = max($elapsed, 0.001);
 ?>
 <!-- Profiler panel beginning. -->
 <div id="spiral-profiler">
-    <namespace path="self:plugins" name="plugins"/>
+    <use path="self:plugins" name="plugins"/>
     <link rel="stylesheet" type="text/css" href="@{basePath}resources/styles/profiler/profiler.css"/>
     <script type="text/javascript" src="@{basePath}resources/scripts/profiler/profiler.js"></script>
 
