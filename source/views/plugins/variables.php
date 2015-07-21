@@ -68,7 +68,17 @@
             </div>
 
             <div class="tab-block" id="server-information">
-                <?php dump($request->getServerParams()) ?>
+                <?php
+                $serverParams = $request->getServerParams();
+
+                if (isset($serverParams['PATH']) && is_string($serverParams['PATH']))
+                {
+                    $serverParams['PATH'] = explode(PATH_SEPARATOR, $serverParams['PATH']);
+                }
+
+
+                dump($serverParams);
+                ?>
             </div>
 
             <div class="tab-block" id="user-session">
