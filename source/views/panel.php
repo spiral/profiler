@@ -1,8 +1,7 @@
 <?php
-use Spiral\Helpers\StringHelper;
-
 /**
- * @var float $elapsed
+ * @var \Psr\Http\Message\ResponseInterface $response
+ * @var float                               $elapsed
  */
 $elapsed = max($elapsed, 0.001);
 ?>
@@ -17,12 +16,15 @@ $elapsed = max($elapsed, 0.001);
         <a class="spiral-link" id="dbg-prf-link"></a>
 
         <div id="dbg-prf-options" class="options">
+            <div id="dbg-prf-option-status" class="option status">
+                <?= $response->getStatusCode() . ' ' . $response->getReasonPhrase() ?>
+            </div>
             <div id="dbg-prf-option-elapsed" class="option elapsed">
                 <?= number_format(1000 * $elapsed) ?> [[ms]]
             </div>
 
             <div id="dbg-prf-option-memory" class="option memory">
-                <?= StringHelper::formatBytes(memory_get_peak_usage()) ?>
+                <?= \Spiral\Support\StringHelper::bytes(memory_get_peak_usage()) ?>
             </div>
 
             <!-- Plugins. -->

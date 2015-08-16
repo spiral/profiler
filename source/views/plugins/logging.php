@@ -1,10 +1,9 @@
 <?php
-use Spiral\Components\Debug\Logger;
+use Spiral\Debug\Logger;
 
 /**
  * @var \Spiral\Profiler\Profiler $profiler
  */
-
 ?>
 <div class="plugin" id="profiler-plugin-logging">
     <div class="title top-title">[[Log Messages]]</div>
@@ -28,43 +27,39 @@ use Spiral\Components\Debug\Logger;
             'error'    => 'red'
         ];
 
-        foreach ($profiler->logMessages() as $message)
-        {
+        foreach ($profiler->logMessages() as $message) {
             $class = '';
-            if (isset($colors[$message[Logger::MESSAGE_LEVEL]]))
-            {
+            if (isset($colors[$message[Logger::MESSAGE_LEVEL]])) {
                 $class = $colors[$message[Logger::MESSAGE_LEVEL]] . '-td';
             }
 
             ?>
-            <tr class="caller-<?= $message[Logger::MESSAGE_CONTAINER] ?> <?= $class ?>">
+            <tr class="caller-<?= $message[Logger::MESSAGE_CHANNEL] ?> <?= $class ?>">
                 <td class="nowrap">
-                    <b><?= $message[Logger::MESSAGE_CONTAINER] ?></b>
+                    <b><?= $message[Logger::MESSAGE_CHANNEL] ?></b>
                 </td>
                 <td class="nowrap">
                     <?= strtoupper($message[Logger::MESSAGE_LEVEL]) ?>
                 </td>
                 <td style="unicode-bidi: embed; white-space: pre;" width="100%"><?php
                     echo $profiler->formatMessage(
-                        $message[Logger::MESSAGE_CONTAINER],
+                        $message[Logger::MESSAGE_CHANNEL],
                         $message[Logger::MESSAGE_BODY],
                         $message[Logger::MESSAGE_CONTEXT]
                     );
                     ?>
                 </td>
             </tr>
-        <?php
+            <?php
         }
-
-        if (!$profiler->logMessages())
-        {
+        if (!$profiler->logMessages()) {
             ?>
             <tr>
                 <td colspan="3" align="center" style="padding: 20px;">
                     [[No log messages were created while performing this user request.]]
                 </td>
             </tr>
-        <?php
+            <?php
         }
         ?>
         </tbody>

@@ -1,26 +1,35 @@
 <?php
 /**
  * Environment definition requires some components.
+ *
+ * @var \Spiral\Profiler\Profiler      $profiler
+ * @var \Spiral\Core\Container         $container Required to get all existed bindings.
+ * @var \Spiral\Core\Components\Loader $loader    List of loaded classes.
+ * @var \Spiral\Http\HttpDispatcher    $http      Routes.
+ * @var \Spiral\Views\ViewManager      $views     View namespaces and caching state.
+ * @var \Spiral\Core\Container         $container Required to get all existed bindings.
+ * @var \Spiral\Files\FileManager      $files     Files operations and etc.
  */
-$container = \Spiral\Core\Container::getInstance();
-$loader = \Spiral\Core\Loader::getInstance();
-$http = \Spiral\Components\Http\HttpDispatcher::getInstance();
-$view = \Spiral\Components\View\ViewManager::getInstance();
-$file = \Spiral\Components\Files\FileManager::getInstance();
+$container = $profiler->getContainer();
+$loader = $profiler->getContainer()->get(\Spiral\Core\Components\Loader::class);
+$http = $profiler->getContainer()->get(\Spiral\Http\HttpDispatcher::class);
+$views = $profiler->getContainer()->get(\Spiral\Views\ViewManager::class);
+$files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
 ?>
 <div class="plugin" id="profiler-plugin-environment">
-    <div class="title top-title">[[Spiral Environment]], PHP (<?= phpversion() ?>)</div>
+    <div class="title top-title">
+        [[Spiral Environment]], PHP (<?= phpversion() ?>), Spiral <?= \Spiral\Core\Core::VERSION ?>
+    </div>
     <div class="narrow-col">
         <?php
-        if (!$view->getConfig()['caching']['enabled'])
-        {
+        if (!$views->config()['cache']['enabled']) {
             ?>
             <div class="error">
                 [[View cache is disabled, this will slow down your application a lot.]]
                 [[Do not forget to turn view cache on later.]]<br/>
-                [[Cache flag located in <b>application/config/view.php</b> configuration file.]]
+                [[Cache flag located in <b>application/config/views.php</b> configuration file.]]
             </div>
-        <?php
+            <?php
         }
         ?>
         <table>
@@ -29,8 +38,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 <th colspan="3">[[Active HTTP Routes]]</th>
             </tr>
             <?php
-            foreach ($http->getRouter()->getRoutes() as $route)
-            {
+            foreach ($http->router()->getRoutes() as $route) {
                 ?>
                 <tr>
                     <td class="nowrap">
@@ -38,13 +46,10 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                     </td>
                     <td>
                         <?php
-                        if ($route instanceof \Spiral\Components\Http\Router\AbstractRoute)
-                        {
+                        if ($route instanceof \Spiral\Http\Routing\AbstractRoute) {
                             echo e($route->getPattern());
-                        }
-                        else
-                        {
-                            echo '-';
+                        } else {
+                            echo '&ndash;';
                         }
                         ?>
                     </td>
@@ -52,7 +57,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                         <?= get_class($route); ?>
                     </td>
                 </tr>
-            <?php
+                <?php
             }
             ?>
             </tbody>
@@ -63,21 +68,19 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 <th colspan="3">[[View Namespaces]]</th>
             </tr>
             <?php
-            foreach ($view->getNamespaces() as $name => $directories)
-            {
-                foreach ($directories as $directory)
-                {
+            foreach ($views->getNamespaces() as $namespace => $directories) {
+                foreach ($directories as $directory) {
                     ?>
                     <tr>
                         <td class="nowrap">
-                            <b><?= $name ?></b>
+                            <b><?= $namespace ?></b>
                         </td>
                         <td>
-                            <?= $file->normalizePath($directory) ?>
+                            <?= $files->normalizePath($directory) . '/' ?>
                         </td>
                     </tr>
                     <?php
-                    $name = '';
+                    $namespace = '';
                 }
             }
             ?>
@@ -90,49 +93,40 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             </tr>
             <?php
             $classIDs = [];
-            foreach ($container->getBindings() as $alias => $resolver)
-            {
+            foreach ($container->getBindings() as $alias => $resolver) {
                 ?>
                 <tr>
                     <td class="nowrap"><?= $alias ?></td>
                     <td>
                         <?php
-                        if (is_string($resolver))
-                        {
+                        if (empty($resolver)) {
+                            echo 'none';
+                        } elseif (is_string($resolver)) {
                             echo e($resolver);
-                        }
-                        elseif (is_array($resolver))
-                        {
+                        } elseif (is_array($resolver)) {
                             echo '<b>late resolve</b> ' . ($resolver[1] ? '(singleton)' : '');
-                        }
-                        elseif (is_object($resolver))
-                        {
+                        } elseif (is_object($resolver)) {
                             echo '<b class="text-blue">' . get_class($resolver) . '</b><br/>';
                         }
                         ?>
-
                     </td>
                     <td class="nowrap">
                         <?php
-                        if (is_object($resolver))
-                        {
+                        if (is_object($resolver)) {
                             //Resolving unique object id
-                            if (!isset($classIDs[spl_object_hash($resolver)]))
-                            {
+                            if (!isset($classIDs[spl_object_hash($resolver)])) {
                                 $classIDs[spl_object_hash($resolver)] = count($classIDs) + 16;
                             }
 
                             $classID = $classIDs[spl_object_hash($resolver)];
                             echo strtoupper(dechex($classID));
-                        }
-                        else
-                        {
-                            echo '-';
+                        } else {
+                            echo '&ndash;';
                         }
                         ?>
                     </td>
                 </tr>
-            <?php
+                <?php
             }
             ?>
             </tbody>
@@ -161,33 +155,27 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 '[[TIME LIMIT]]'             => 'max_execution_time'
             ];
 
-            foreach ($serverVariables as $title => $variable)
-            {
-                if (array_key_exists($variable, $_SERVER))
-                {
+            foreach ($serverVariables as $title => $variable) {
+                if (array_key_exists($variable, $_SERVER)) {
                     ?>
                     <tr>
-                        <td align="right" class="nowrap"><?= str_replace(' ', '&nbsp;', $title) ?></td>
+                        <td align="right" class="nowrap"><?= str_replace(' ', '&nbsp;',
+                                $title) ?></td>
                         <td><?= $_SERVER[$variable] ?></td>
                     </tr>
-                <?php
+                    <?php
                 }
             }
 
             $phpEnvironment = ini_get_all();
-            foreach ($phpVariables as $title => $variable)
-            {
+            foreach ($phpVariables as $title => $variable) {
                 $variableName = preg_replace('/\(.+?\)/', '', $variable);
-                if (array_key_exists($variableName, $phpEnvironment))
-                {
-                    if (!strncasecmp($variable, '(bool)', 6))
-                    {
+                if (array_key_exists($variableName, $phpEnvironment)) {
+                    if (!strncasecmp($variable, '(bool)', 6)) {
                         $value = $phpEnvironment[$variableName]['local_value']
                             ? '<b>[[TRUE]]</b>'
                             : '<b>[[FALSE]]</b>';
-                    }
-                    else
-                    {
+                    } else {
                         $value = $phpEnvironment[$variableName]['local_value'];
                     }
                     ?>
@@ -195,7 +183,7 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                         <td align="right"><?= str_replace(' ', '&nbsp;', $title) ?></td>
                         <td><?= $value ?></td>
                     </tr>
-                <?php
+                    <?php
                 }
             }
             ?>
@@ -208,15 +196,14 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             </tr>
             <?php
             $extensions = get_loaded_extensions();
-            while ($extension = next($extensions))
-            {
+            while ($extension = next($extensions)) {
                 ?>
                 <tr>
                     <td><?= $extension ?></td>
                     <td><?= next($extensions) ?></td>
                     <td><?= next($extensions) ?></td>
                 </tr>
-            <?php
+                <?php
             }
             ?>
             </tbody>
@@ -230,33 +217,30 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             </tr>
             <?php
 
-            $application = $file->normalizePath(directory('application'));
-            $libraries = $file->normalizePath(directory('libraries'));
-            $framework = $file->normalizePath(directory('framework'));
+            $application = $files->normalizePath(directory('application'));
+            $libraries = $files->normalizePath(directory('libraries'));
+            $framework = $files->normalizePath(directory('framework'));
 
-            foreach ($loader->getClasses() as $class => $filename)
-            {
-                $filename = $file->normalizePath($filename);
+            foreach ($loader->getClasses() as $class => $filename) {
+                $filename = $files->normalizePath($filename);
 
                 $color = '';
-                if (strpos($filename, $application) === 0)
-                {
+                if (strpos($filename, $application) === 0) {
                     $color = 'blue';
                 }
 
                 if (
                     strpos($filename, $libraries) === 0
                     && strpos($filename, $framework) === false
-                )
-                {
+                ) {
                     $color = 'yellow';
                 }
                 ?>
                 <tr class="<?= $color ? $color . '-td' : '' ?>">
                     <td><?= $class ?></td>
-                    <td><?= $file->relativePath($filename) ?></td>
+                    <td><?= $files->relativePath($filename, directory('root')) ?></td>
                 </tr>
-            <?php
+                <?php
             }
             ?>
             </tbody>
@@ -268,10 +252,8 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
             </tr>
             <?php
             $totalSize = 0;
-            foreach (get_included_files() as $filename)
-            {
-                if (!file_exists($filename))
-                {
+            foreach (get_included_files() as $filename) {
+                if (!file_exists($filename)) {
                     continue;
                 }
 
@@ -279,15 +261,17 @@ $file = \Spiral\Components\Files\FileManager::getInstance();
                 $totalSize += $filesize;
                 ?>
                 <tr>
-                    <td><?= $file->normalizePath($filename) ?></td>
-                    <td align="right" class="nowrap"><?= StringHelper::formatBytes($filesize) ?></td>
+                    <td><?= $files->normalizePath($filename) ?></td>
+                    <td align="right"
+                        class="nowrap"><?= \Spiral\Support\StringHelper::bytes($filesize) ?></td>
                 </tr>
-            <?php
+                <?php
             }
             ?>
             <tr>
                 <td align="right">TOTAL:</td>
-                <td align="right" class="nowrap"><?= StringHelper::formatBytes($totalSize) ?></td>
+                <td align="right"
+                    class="nowrap"><?= \Spiral\Support\StringHelper::bytes($totalSize) ?></td>
             </tr>
             </tbody>
         </table>
