@@ -94,6 +94,10 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
             <?php
             $classIDs = [];
             foreach ($container->getBindings() as $alias => $resolver) {
+                if (lcfirst($alias) == $alias) {
+                    //Potential short binding
+                    $alias = "<b>{$alias}</b>";
+                }
                 ?>
                 <tr>
                     <td class="nowrap"><?= $alias ?></td>
