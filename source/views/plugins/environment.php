@@ -216,10 +216,8 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
                 <th colspan="2">[[Loaded Classes]]</th>
             </tr>
             <?php
-
             $application = $files->normalizePath(directory('application'));
             $libraries = $files->normalizePath(directory('libraries'));
-            $framework = $files->normalizePath(directory('framework'));
 
             foreach ($loader->getClasses() as $class => $filename) {
                 $filename = $files->normalizePath($filename);
@@ -231,7 +229,7 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
 
                 if (
                     strpos($filename, $libraries) === 0
-                    && strpos($filename, $framework) === false
+                    && substr($class, 0, 7) != 'Spiral\\'
                 ) {
                     $color = 'yellow';
                 }
