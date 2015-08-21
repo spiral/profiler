@@ -97,6 +97,7 @@ function init() {
     otherActions();
     initTabs();
     changeTableLine();
+    document.getElementById('js-mode-switch').onclick = toggleMode;
 }
 
 function otherActions() {
@@ -250,4 +251,13 @@ function changeLinkClass() {
         }
 
     return false;
+}
+
+function toggleMode(){
+    var profiler = document.getElementById('spiral-profiler');
+    if(profiler.className.indexOf('dark-profiler') !== -1){
+        profiler.className = '';
+    } else {
+        profiler.className = 'dark-profiler'
+    }
 }
