@@ -1,4 +1,6 @@
 <?php
+use Spiral\Helpers\StringHelper;
+
 /**
  * @var \Psr\Http\Message\ResponseInterface $response
  * @var float                               $elapsed
@@ -16,10 +18,13 @@ $elapsed = max($elapsed, 0.001);
         <a class="spiral-link" id="dbg-prf-link"></a>
 
         <div id="dbg-prf-options" class="options">
+            <div id="dbg-prf-mode-status" class="option mode" style="display: none">
+                <a href="#" id="js-mode-switch"></a>
+            </div>
             <div id="dbg-prf-option-status" class="option status">
                 <?= $response->getStatusCode() . ' ' . $response->getReasonPhrase() ?>
             </div>
-            <div id="dbg-prf-option-elapsed" class="option elapsed">
+                  <div id="dbg-prf-option-elapsed" class="option elapsed">
                 <?= number_format(1000 * $elapsed) ?> [[ms]]
             </div>
 
