@@ -176,15 +176,17 @@ var tabLinks = new Array();
 var contentDivs = new Array();
 
 function initTabs() {
+    var tabListItems = document.getElementById('profiler-tabs').childNodes;
 
-    var tabListItems = document.getElementById('tabs').childNodes;
+    for (var i = 0; i < tabListItems.length; i++) {
+        if (tabListItems[i].nodeName == "LI") {
+            var tabLink = getFirstChildWithTagName(tabListItems[i], 'A');
 
-    for ( var i = 0; i < tabListItems.length; i++ ) {
-        if ( tabListItems[i].nodeName == "LI" ) {
-            var tabLink = getFirstChildWithTagName( tabListItems[i], 'A' );
-            var id = getHash( tabLink.getAttribute('href') );
-            tabLinks[id] = tabLink;
-            contentDivs[id] = document.getElementById( id );
+            if (typeof(tabLink) !== 'undefined') {
+                var id = getHash(tabLink.getAttribute('href'));
+                tabLinks[id] = tabLink;
+                contentDivs[id] = document.getElementById(id);
+            }
         }
     }
 
