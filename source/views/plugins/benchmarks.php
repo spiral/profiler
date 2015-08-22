@@ -13,6 +13,7 @@ $colors = [
 <div class="plugin" id="profiler-plugin-benchmarks">
     <div class="title top-title">[[Application Profiling]]</div>
     <div class="flow" id="profiler-time-flow">
+        <a href="#" class="change-size origin-size" id="trigger-link"></a>
         <table>
             <thead>
             <tr>
