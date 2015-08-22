@@ -225,7 +225,7 @@ class Profiler extends Module implements MiddlewareInterface
         /**
          * @var ViewConfig $viewConfig
          */
-        $viewConfig = $container->get(ViewConfig::class, [
+        $viewConfig = $container->construct(ViewConfig::class, [
             'baseDirectory' => $definition->getLocation()
         ]);
 
