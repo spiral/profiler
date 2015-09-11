@@ -54,8 +54,8 @@ class Profiler extends Module implements MiddlewareInterface
 
     /**
      * @param ViewManager $view
-     * @param Debugger $debugger
-     * @param Core $container
+     * @param Debugger    $debugger
+     * @param Core        $container
      */
     public function __construct(ViewManager $view, Debugger $debugger, Core $container)
     {
@@ -75,11 +75,16 @@ class Profiler extends Module implements MiddlewareInterface
     /**
      * {@inheritdoc}
      */
-    public function __invoke(ServerRequestInterface $request, \Closure $next)
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        \Closure $next
+    )
     {
-        if ($request->getAttribute('profiler')) {
+        if ($request->getAttribute('profiler'))
+        {
             //Already handled at top level
-            return $next($request);
+            return $next();
         }
 
         //Mounting debugger scope
@@ -102,9 +107,9 @@ class Profiler extends Module implements MiddlewareInterface
      * Mount profiler panel to response (if possible).
      *
      * @param ServerRequestInterface $request Server request instance.
-     * @param ResponseInterface $response
-     * @param float $started Time when profiler was activated.
-     * @param float $elapsed Elapsed time.
+     * @param ResponseInterface      $response
+     * @param float                  $started Time when profiler was activated.
+     * @param float                  $elapsed Elapsed time.
      * @return ResponseInterface
      */
     protected function mount(
@@ -114,13 +119,16 @@ class Profiler extends Module implements MiddlewareInterface
         $elapsed = 0.0
     )
     {
-        if (!$response->getBody()->isWritable()) {
+        if (!$response->getBody()->isWritable())
+        {
             //We can't write to the stream
             return $response;
         }
 
-        if (!empty($response->getHeaderLine('Content-Type'))) {
-            if (strpos($response->getHeaderLine('Content-Type'), 'html') === false) {
+        if (!empty($response->getHeaderLine('Content-Type')))
+        {
+            if (strpos($response->getHeaderLine('Content-Type'), 'html') === false)
+            {
                 //We can only write to responses when content type does not specified or responses
                 //with html related content type
                 return $response;
@@ -129,10 +137,10 @@ class Profiler extends Module implements MiddlewareInterface
 
         $panel = $this->view->render('profiler:panel', [
             'profiler' => $this,
-            'request' => $request,
+            'request'  => $request,
             'response' => $response,
-            'started' => $started,
-            'elapsed' => $elapsed
+            'started'  => $started,
+            'elapsed'  => $elapsed
         ]);
 
         $response->getBody()->write($panel);
@@ -149,8 +157,10 @@ class Profiler extends Module implements MiddlewareInterface
     public function getBenchmarks(&$lastEnding = null)
     {
         $result = [];
-        foreach ($this->debugger->getBenchmarks() as $record => $benchmark) {
-            if (!isset($benchmark[self::BENCHMARK_ENDED])) {
+        foreach ($this->debugger->getBenchmarks() as $record => $benchmark)
+        {
+            if (!isset($benchmark[self::BENCHMARK_ENDED]))
+            {
                 //Closing continues record
                 $benchmark[self::BENCHMARK_ENDED] = microtime(true);
             }
@@ -158,11 +168,11 @@ class Profiler extends Module implements MiddlewareInterface
             $elapsed = $benchmark[self::BENCHMARK_ENDED] - $benchmark[self::BENCHMARK_STARTED];
 
             $result[$record] = [
-                'caller' => $benchmark[self::BENCHMARK_CALLER],
-                'record' => $benchmark[self::BENCHMARK_RECORD],
+                'caller'  => $benchmark[self::BENCHMARK_CALLER],
+                'record'  => $benchmark[self::BENCHMARK_RECORD],
                 'context' => $benchmark[self::BENCHMARK_CONTEXT],
                 'started' => $benchmark[self::BENCHMARK_STARTED],
-                'ended' => $lastEnding = $benchmark[self::BENCHMARK_ENDED],
+                'ended'   => $lastEnding = $benchmark[self::BENCHMARK_ENDED],
                 'elapsed' => $elapsed
             ];
         }
@@ -185,13 +195,14 @@ class Profiler extends Module implements MiddlewareInterface
      *
      * @param string $container
      * @param string $message
-     * @param array $context
+     * @param array  $context
      * @return string
      */
     public function formatMessage($container, $message, $context)
     {
         \SqlFormatter::$pre_attributes = '';
-        if (strpos($container, 'Spiral\Database\Drivers') === 0 && isset($context['query'])) {
+        if (strpos($container, 'Spiral\Database\Drivers') === 0 && isset($context['query']))
+        {
             //SQL queries from drivers
             return $this->highlightSQL($message);
         }
