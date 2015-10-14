@@ -9,7 +9,7 @@
   ],
   "require": {
     "spiral/framework": "*",
-    "jdorn/sql-formatter": "~1.3@dev"
+    "jdorn/sql-formatter": "*"
   },
   "autoload": {
     "psr-4": {
