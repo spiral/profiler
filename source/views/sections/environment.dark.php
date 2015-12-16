@@ -2,73 +2,34 @@
 /**
  * Environment definition requires some components.
  *
- * @var \Spiral\Profiler\Profiler      $profiler
- * @var \Spiral\Core\Container         $container Required to get all existed bindings.
- * @var \Spiral\Core\Components\Loader $loader    List of loaded classes.
- * @var \Spiral\Http\HttpDispatcher    $http      Routes.
- * @var \Spiral\Views\ViewManager      $views     View namespaces and caching state.
- * @var \Spiral\Core\Container         $container Required to get all existed bindings.
- * @var \Spiral\Files\FileManager      $files     Files operations and etc.
+ * @var \Spiral\Core\Container            $container
+ * @var \Spiral\Core\Loader               $loader
+ * @var \Spiral\Http\HttpDispatcher       $http
+ * @var \Spiral\Views\Configs\ViewsConfig $viewsConfig
+ * @var \Spiral\Files\FileManager         $files
  */
-$container = $profiler->getContainer();
-$loader = $profiler->getContainer()->get(\Spiral\Core\Components\Loader::class);
-$http = $profiler->getContainer()->get(\Spiral\Http\HttpDispatcher::class);
-$views = $profiler->getContainer()->get(\Spiral\Views\ViewManager::class);
-$files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
+$loader = $container->get(\Spiral\Core\Loader::class);
+$http = $container->get(\Spiral\Http\HttpDispatcher::class);
+$files = $container->get(\Spiral\Files\FileManager::class);
+$viewsConfig = $container->get(\Spiral\Views\Configs\ViewsConfig::class);
 ?>
 <div class="plugin" id="profiler-plugin-environment">
     <div class="title top-title">
         [[Spiral Environment]], PHP (<?= phpversion() ?>), Spiral <?= \Spiral\Core\Core::VERSION ?>
     </div>
     <div class="narrow-col">
-        <?php
-        if (!$views->config()['cache']['enabled']) {
-            ?>
+        <?php if (!$viewsConfig->cacheEnabled()) { ?>
             <div class="error">
-                [[View cache is disabled, this will slow down your application a lot.]]
-                [[Do not forget to turn view cache on later.]]<br/>
-                [[Cache flag located in <b>application/config/views.php</b> configuration file.]]
+                [[View cache is disabled, view files recompied on every request.]]
             </div>
-            <?php
-        }
-        ?>
-        <table>
-            <tbody>
-            <tr>
-                <th colspan="3">[[Active HTTP Routes]]</th>
-            </tr>
-            <?php
-            foreach ($http->router()->getRoutes() as $route) {
-                ?>
-                <tr>
-                    <td class="nowrap">
-                        <b><?= $route->getName() ?></b>
-                    </td>
-                    <td>
-                        <?php
-                        if ($route instanceof \Spiral\Http\Routing\AbstractRoute) {
-                            echo e($route->getPattern());
-                        } else {
-                            echo '&ndash;';
-                        }
-                        ?>
-                    </td>
-                    <td>
-                        <?= get_class($route); ?>
-                    </td>
-                </tr>
-                <?php
-            }
-            ?>
-            </tbody>
-        </table>
+        <?php } ?>
         <table>
             <tbody>
             <tr>
                 <th colspan="3">[[View Namespaces]]</th>
             </tr>
             <?php
-            foreach ($views->getNamespaces() as $namespace => $directories) {
+            foreach ($viewsConfig->getNamespaces() as $namespace => $directories) {
                 foreach ($directories as $directory) {
                     ?>
                     <tr>
@@ -89,7 +50,7 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
         <table>
             <tbody>
             <tr>
-                <th colspan="3">[[Components]]</th>
+                <th colspan="3">[[Container Bindings]]</th>
             </tr>
             <?php
             $classIDs = [];
@@ -108,7 +69,7 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
                         } elseif (is_string($resolver)) {
                             echo e($resolver);
                         } elseif (is_array($resolver)) {
-                            echo '<b>late resolve</b> ' . ($resolver[1] ? '(singleton)' : '');
+                            echo '<b>lazy resolver</b> ' . ($resolver[1] ? '(singleton)' : '');
                         } elseif (is_object($resolver)) {
                             echo '<b class="text-blue">' . get_class($resolver) . '</b><br/>';
                         }
@@ -116,7 +77,7 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
                     </td>
                     <td class="nowrap">
                         <?php
-                        if (is_object($resolver)) {
+                        if (!empty($resolver) && is_object($resolver)) {
                             //Resolving unique object id
                             if (!isset($classIDs[spl_object_hash($resolver)])) {
                                 $classIDs[spl_object_hash($resolver)] = count($classIDs) + 16;
@@ -130,9 +91,7 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
                         ?>
                     </td>
                 </tr>
-                <?php
-            }
-            ?>
+            <?php } ?>
             </tbody>
         </table>
         <table>
@@ -163,8 +122,9 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
                 if (array_key_exists($variable, $_SERVER)) {
                     ?>
                     <tr>
-                        <td align="right" class="nowrap"><?= str_replace(' ', '&nbsp;',
-                                $title) ?></td>
+                        <td align="right" class="nowrap">
+                            <?= str_replace(' ', '&nbsp;', $title) ?>
+                        </td>
                         <td><?= $_SERVER[$variable] ?></td>
                     </tr>
                     <?php
@@ -237,14 +197,18 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
                 ) {
                     $color = 'yellow';
                 }
+
+                if (
+                    strpos($class, 'Exception') !== false
+                ) {
+                    $color = 'red';
+                }
                 ?>
                 <tr class="<?= $color ? $color . '-td' : '' ?>">
                     <td><?= $class ?></td>
                     <td><?= $files->relativePath($filename, directory('root')) ?></td>
                 </tr>
-                <?php
-            }
-            ?>
+            <?php } ?>
             </tbody>
         </table>
         <table>
@@ -253,6 +217,7 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
                 <th colspan="2">[[Included files]]</th>
             </tr>
             <?php
+            $totalCount = 0;
             $totalSize = 0;
             foreach (get_included_files() as $filename) {
                 if (!file_exists($filename)) {
@@ -260,23 +225,25 @@ $files = $profiler->getContainer()->get(\Spiral\Files\FileManager::class);
                 }
 
                 $filesize = filesize($filename);
+                $totalCount++;
                 $totalSize += $filesize;
                 ?>
                 <tr>
                     <td><?= $files->normalizePath($filename) ?></td>
-                    <td align="right"
-                        class="nowrap"><?= \Spiral\Support\StringHelper::bytes($filesize) ?></td>
+                    <td align="right" class="nowrap">
+                        <?= \Spiral\Support\Strings::bytes($filesize) ?>
+                    </td>
                 </tr>
                 <?php
             }
             ?>
             <tr>
                 <td align="right">TOTAL:</td>
-                <td align="right"
-                    class="nowrap"><?= \Spiral\Support\StringHelper::bytes($totalSize) ?></td>
+                <td align="right" class="nowrap">
+                    <?= \Spiral\Support\Strings::bytes($totalSize) . ", " . number_format($totalCount) . " file(s)" ?>
+                </td>
             </tr>
             </tbody>
         </table>
-
     </div>
 </div>

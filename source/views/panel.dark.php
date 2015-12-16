@@ -1,15 +1,13 @@
 <?php
-use Spiral\Helpers\StringHelper;
-
 /**
  * @var \Psr\Http\Message\ResponseInterface $response
  * @var float                               $elapsed
  */
 $elapsed = max($elapsed, 0.001);
 ?>
+<dark:use path="profiler:sections/*" namespace="plugin"/>
 <!-- Profiler panel beginning. -->
 <div id="spiral-profiler">
-    <use path="self:plugins" namespace="plugins"/>
     <link rel="stylesheet" type="text/css" href="@{basePath}resources/styles/profiler/profiler.css"/>
     <script type="text/javascript" src="@{basePath}resources/scripts/profiler/profiler.js"></script>
 
@@ -24,12 +22,14 @@ $elapsed = max($elapsed, 0.001);
             <div id="dbg-prf-option-status" class="option status">
                 <?= $response->getStatusCode() . ' ' . $response->getReasonPhrase() ?>
             </div>
-                  <div id="dbg-prf-option-elapsed" class="option elapsed">
+            <div id="dbg-prf-option-elapsed" class="option elapsed">
                 <?= number_format(1000 * $elapsed) ?> [[ms]]
             </div>
 
             <div id="dbg-prf-option-memory" class="option memory">
-                <?= \Spiral\Support\StringHelper::bytes(memory_get_peak_usage()) ?>
+                <span title="[[Peak Usage]]"><?= \Spiral\Support\Strings::bytes(memory_get_peak_usage(true)) ?></span>
+                /
+                <span title="[[Current Usage]]"><?= \Spiral\Support\Strings::bytes(memory_get_usage(true)) ?></span>
             </div>
 
             <!-- Plugins. -->
@@ -56,10 +56,10 @@ $elapsed = max($elapsed, 0.001);
         <div id="dbg-prf-content" class="content">
             <div id="dbg-prf-content-option-close" class="option close option-close"></div>
             <div class="inner-modal">
-                <plugins:environment/>
-                <plugins:variables/>
-                <plugins:benchmarks/>
-                <plugins:logging/>
+                <plugin:environment/>
+                <plugin:variables/>
+                <plugin:benchmarks/>
+                <plugin:logging/>
             </div>
         </div>
         <div id="dbg-js-content" class="content">

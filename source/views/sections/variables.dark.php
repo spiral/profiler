@@ -4,8 +4,15 @@
     /**
      * @var \Psr\Http\Message\ServerRequestInterface $request
      * @var \Psr\Http\Message\ResponseInterface      $response
+     * @var \Spiral\Core\Container                   $container
      */
-    $session = \Spiral\Session\SessionStore::instance();
+    $session = null;
+    if ($container->hasInstance(\Spiral\Session\SessionInterface::class)) {
+        /**
+         * @var \Spiral\Session\SessionInterface $session
+         */
+        $session = $container->get(\Spiral\Session\SessionInterface::class);
+    }
     ?>
     <div class="tabs-block">
         <div class="tab-navigation">
@@ -46,9 +53,11 @@
                 <li>
                     <b>[[Environment]]</b>
                 </li>
-                <li>
-                    <a href="#user-session">[[User Session]]</a>
-                </li>
+                <?php if (!empty($session) && !empty($session->getID(false))) { ?>
+                    <li>
+                        <a href="#user-session">[[User Session]]</a>
+                    </li>
+                <?php } ?>
                 <li>
                     <a href="#server-information">[[Server Information]]</a>
                 </li>
@@ -83,15 +92,12 @@
                 <?php dump($response->getHeaders()) ?>
             </div>
 
-            <div class="tab-block" id="user-session">
-                <?php
-                if (!$session->isStarted()) {
-                    echo "[[User session has not been started.]]";
-                } else {
-                    dump($session->all());
-                }
-                ?>
-            </div>
+            <?php
+            if (!empty($session) && !empty($session->getID(false))) { ?>
+                <div class="tab-block" id="user-session">
+                    <?php dump($session->all()); ?>
+                </div>
+            <?php } ?>
 
             <div class="tab-block" id="server-information">
                 <?php

@@ -1,8 +1,6 @@
 <?php
-use Spiral\Debug\Logger;
-
 /**
- * @var \Spiral\Profiler\Profiler $profiler
+ * @var \Spiral\Profiler\ProfilerWrapper $profiler
  */
 ?>
 <div class="plugin" id="profiler-plugin-logging">
@@ -28,40 +26,37 @@ use Spiral\Debug\Logger;
         ];
 
         foreach ($profiler->logMessages() as $message) {
+            $channel = $message['channel'];
+            $level = strtolower($message['level_name']);
+
             $class = '';
-            if (isset($colors[$message[Logger::MESSAGE_LEVEL]])) {
-                $class = $colors[$message[Logger::MESSAGE_LEVEL]] . '-td';
+            if (isset($colors[$level])) {
+                $class = $colors[$level] . '-td';
             }
 
             ?>
-            <tr class="caller-<?= $message[Logger::MESSAGE_CHANNEL] ?> <?= $class ?>">
-                <td class="nowrap">
-                    <b><?= $message[Logger::MESSAGE_CHANNEL] ?></b>
-                </td>
-                <td class="nowrap">
-                    <?= strtoupper($message[Logger::MESSAGE_LEVEL]) ?>
-                </td>
+            <tr class="caller-<?= $channel ?> <?= $class ?>">
+                <td class="nowrap"><b><?= $channel ?></b></td>
+                <td class="nowrap"><?= strtoupper($level) ?></td>
                 <td style="unicode-bidi: embed; white-space: pre;" width="100%"><?php
                     echo $profiler->formatMessage(
-                        $message[Logger::MESSAGE_CHANNEL],
-                        $message[Logger::MESSAGE_BODY],
-                        $message[Logger::MESSAGE_CONTEXT]
+                        $message['channel'],
+                        $message['message'],
+                        $message['context']
                     );
                     ?>
                 </td>
             </tr>
             <?php
         }
-        if (!$profiler->logMessages()) {
+        if (empty($profiler->logMessages())) {
             ?>
             <tr>
                 <td colspan="3" align="center" style="padding: 20px;">
                     [[No log messages were created while performing this user request.]]
                 </td>
             </tr>
-            <?php
-        }
-        ?>
+        <?php } ?>
         </tbody>
     </table>
 </div>

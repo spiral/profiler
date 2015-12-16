@@ -1,14 +1,10 @@
 <?php
 /**
- * @var \Spiral\Profiler\Profiler $profiler
- * @var float                     $started
+ * @var \Spiral\Profiler\ProfilerWrapper $profiler
+ * @var float                            $started
+ * @var float                            $ending
  */
-$colors = [
-    2    => 'default',
-    10   => 'blue',
-    30   => 'orange',
-    1000 => 'red'
-];
+$colors = [2 => 'default', 10 => 'blue', 30 => 'orange', 1000 => 'red'];
 ?>
 <div class="plugin" id="profiler-plugin-benchmarks">
     <div class="title top-title">[[Application Profiling]]</div>
@@ -35,6 +31,10 @@ $colors = [
         $profilerScale = $profilerOffset / $profilerFrame;
 
         foreach ($benchmarks as $record => $benchmark) {
+//            if ($benchmark['started'] < $started) {
+//                continue;
+//            }
+
             //Calculating line length
             $lineLength = 100 * (($benchmark['elapsed']) / $profilerFrame) / $profilerScale;
             foreach ($colors as $length => $color) {
@@ -58,29 +58,34 @@ $colors = [
                     $context = $profiler->highlightSQL($context);
                 }
 
-                $caller = get_class($caller);
+                $reflection = new ReflectionObject($caller);
+            } else {
+                $reflection = new ReflectionClass($caller);
             }
 
             ?>
-            <div class="timeline clearfix" onclick="this.setAttribute('status', this.getAttribute('status') == 'open' ? 'closed' : 'open')" status="closed">
+            <div class="timeline clearfix"
+                 onclick="this.setAttribute('status', this.getAttribute('status') == 'open' ? 'closed' : 'open')"
+                 status="closed">
                 <div class="clearfix">
-                    <div class="name"><?= $caller ?></div>
+                    <div class="name"
+                         title="<?= $reflection->getName() ?>"><?= $reflection->getShortName() ?></div>
                     <div class="time <?= !empty($color) ? 'time-' . $color : '' ?>">
-                        <div style="margin-left: <?= $lineOffset ?>%; width: <?= $lineLength ?>%;"></div>
+                        <div
+                            style="margin-left: <?= $lineOffset ?>%; width: <?= $lineLength ?>%;"></div>
                     </div>
                 </div>
                 <div class="details clearfix">
-                    <div style="unicode-bidi: embed; white-space: pre; color: #33a3fe;"><?= $benchmark['record'] ?></div>
+                    <div
+                        style="unicode-bidi: embed; white-space: pre; color: #33a3fe;"><?= $benchmark['record'] ?></div>
                     <div style="unicode-bidi: embed; white-space: pre;"><?= $context ?></div>
-                    <br>
+                    <br/>
 
                     <div style="font-weight: bold;">
                         [[Elapsed:]] ~<?= number_format($benchmark['elapsed'] * 1000) ?> [[ms]]
                     </div>
                 </div>
             </div>
-            <?php
-        }
-        ?>
+        <?php } ?>
     </div>
 </div>
