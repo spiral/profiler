@@ -27,9 +27,9 @@ $elapsed = max($elapsed, 0.001);
             </div>
 
             <div id="dbg-prf-option-memory" class="option memory">
-                <span title="[[Peak Usage]]"><?= \Spiral\Support\Strings::bytes(memory_get_peak_usage(true)) ?></span>
-                /
-                <span title="[[Current Usage]]"><?= \Spiral\Support\Strings::bytes(memory_get_usage(true)) ?></span>
+                <span title="[[Real usage:]] <?= \Spiral\Support\Strings::bytes(memory_get_peak_usage(true)) ?>">
+                    <?= \Spiral\Support\Strings::bytes(memory_get_peak_usage()) ?>
+                </span>
             </div>
 
             <!-- Plugins. -->
