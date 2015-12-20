@@ -25,7 +25,7 @@ $full = microtime(true) - SPIRAL_INITIAL_TIME;
                 <?= $response->getStatusCode() . ' ' . $response->getReasonPhrase() ?>
             </div>
 
-            <div id="dbg-prf-option-elapsed" class="option elapsed" title="Full time <?= number_format(1000 * $elapsed) ?> ms">
+            <div id="dbg-prf-option-elapsed" class="option elapsed" title="[[Frame time:]] <?= number_format(1000 * $elapsed) ?> [[ms]]">
                 <?= number_format(1000 * $full) ?> [[ms]]
             </div>
 
