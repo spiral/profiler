@@ -4,6 +4,7 @@
  * @var float                               $elapsed
  */
 $elapsed = max($elapsed, 0.001);
+$full = microtime(true) - SPIRAL_INITIAL_TIME;
 ?>
 <dark:use path="profiler:sections/*" namespace="plugin"/>
 <!-- Profiler panel beginning. -->
@@ -19,11 +20,13 @@ $elapsed = max($elapsed, 0.001);
             <div id="dbg-prf-mode-status" class="option mode" style="display: none">
                 <a href="#" id="js-mode-switch"></a>
             </div>
+
             <div id="dbg-prf-option-status" class="option status">
                 <?= $response->getStatusCode() . ' ' . $response->getReasonPhrase() ?>
             </div>
-            <div id="dbg-prf-option-elapsed" class="option elapsed">
-                <?= number_format(1000 * $elapsed) ?> [[ms]]
+
+            <div id="dbg-prf-option-elapsed" class="option elapsed" title="Full time <?= number_format(1000 * $elapsed) ?> ms">
+                <?= number_format(1000 * $full) ?> [[ms]]
             </div>
 
             <div id="dbg-prf-option-memory" class="option memory">
