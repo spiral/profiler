@@ -19,9 +19,6 @@ class ProfilerModule implements ModuleInterface
      */
     public function register(RegistratorInterface $registrator)
     {
-        /**
-         * Let's register new view namespace 'profiler'.
-         */
         $registrator->configure('views', 'namespaces', 'spiral/profiler', [
             "'profiler' => [",
             "   directory('libraries') . 'spiral/profiler/source/views/',",

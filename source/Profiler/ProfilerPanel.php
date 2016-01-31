@@ -37,7 +37,7 @@ class ProfilerPanel extends Bootloader
      */
     public function boot(HttpDispatcher $dispatcher, FactoryInterface $factory)
     {
-        $dispatcher->riseMiddleware($factory->make(ProfilerWrapper::class, [
+        $dispatcher->pushMiddleware($factory->make(ProfilerWrapper::class, [
             'started' => microtime(true)
         ]));
     }
