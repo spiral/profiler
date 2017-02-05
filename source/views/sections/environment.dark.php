@@ -184,7 +184,7 @@ $viewsConfig = $container->get(\Spiral\Views\Configs\ViewsConfig::class);
             $libraries = $files->normalizePath(directory('libraries'));
 
             foreach ($loader->getClasses() as $class => $filename) {
-                $filename = $filename ? $files->normalizePath($filename): '~undefined~';
+                $filename = $filename ? $files->normalizePath($filename) : null;
 
                 $color = '';
                 if (strpos($filename, $application) === 0) {
@@ -206,7 +206,7 @@ $viewsConfig = $container->get(\Spiral\Views\Configs\ViewsConfig::class);
                 ?>
                 <tr class="<?= $color ? $color . '-td' : '' ?>">
                     <td><?= $class ?></td>
-                    <td><?= $files->relativePath($filename, directory('root')) ?></td>
+                    <td><?= $filename ? $files->relativePath($filename, directory('root')): '~undefined~' ?></td>
                 </tr>
             <?php } ?>
             </tbody>
