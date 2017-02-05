@@ -5,6 +5,7 @@
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+
 namespace Spiral\Profiler;
 
 use Psr\Http\Message\ResponseInterface as Response;
@@ -35,7 +36,10 @@ class ProfilerHeader extends Bootloader
              */
             $response = $next($request, $response);
 
-            return $response->withHeader('X-Elapsed', number_format(microtime(true) - $start, 4));
+            return $response->withHeader(
+                'X-Elapsed',
+                number_format(microtime(true) - $start, 4)
+            );
         });
     }
 }

@@ -10,12 +10,9 @@ namespace Spiral\Profiler;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Spiral\Core\Container;
 use Spiral\Core\ContainerInterface;
-use Spiral\Debug\Debugger;
-use Spiral\Debug\Logger\SharedHandler;
+use Spiral\Debug\Benchmarker;
 use Spiral\Http\MiddlewareInterface;
-use Spiral\Views\ViewManager;
 use Spiral\Views\ViewsInterface;
 
 /**
@@ -39,19 +36,22 @@ class ProfilerWrapper implements MiddlewareInterface
     private $started = 0;
 
     /**
-     * @var ViewManager
+     * @invisible
+     * @var DebugHandler
      */
-    protected $view = null;
+    private $handler = null;
 
     /**
-     * @var SharedHandler
+     * @invisible
+     * @var ViewsInterface
      */
-    protected $handler = null;
+    protected $views = null;
 
     /**
-     * @var Debugger
+     * @invisible
+     * @var Benchmarker
      */
-    protected $debugger = null;
+    protected $benchmarker = null;
 
     /**
      * @invisible
@@ -60,20 +60,26 @@ class ProfilerWrapper implements MiddlewareInterface
     protected $container = null;
 
     /**
-     * @param float|int          $started
+     * @param float              $started
      * @param ViewsInterface     $views
-     * @param Debugger           $debugger
+     * @param DebugHandler       $handler
+     * @param Benchmarker        $benchmarker
      * @param ContainerInterface $container
      */
     public function __construct(
-        $started,
+        float $started,
         ViewsInterface $views,
-        Debugger $debugger,
+        DebugHandler $handler,
+        Benchmarker $benchmarker,
         ContainerInterface $container
     ) {
         $this->started = $started;
-        $this->view = $views;
-        $this->debugger = $debugger;
+        $this->handler = $handler;
+
+        $this->views = $views;
+        $this->benchmarker = $benchmarker;
+
+        //Needed for correct scopes
         $this->container = $container;
     }
 
@@ -87,18 +93,11 @@ class ProfilerWrapper implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        $outerHandler = $this->debugger->shareHandler($this->handler = new SharedHandler());
-
-        try {
-            $response = $next($request->withAttribute('profiler', $this->started));
-            $elapsed = microtime(true) - $this->started;
-        } finally {
-            //Restoring original debug handler
-            $this->debugger->shareHandler($outerHandler);
-        }
+        $response = $next($request->withAttribute('profiler', $this->started));
+        $elapsed = microtime(true) - $this->started;
 
         //Mounting profiler panel
-        return $this->mountPanel($request, $response, $this->started, $elapsed);
+        return $this->mountProfiler($request, $response, $this->started, $elapsed);
     }
 
     /**
@@ -108,14 +107,15 @@ class ProfilerWrapper implements MiddlewareInterface
      * @param Response $response
      * @param float    $started Time when profiler was activated.
      * @param float    $elapsed Elapsed time.
+     *
      * @return Response
      */
-    protected function mountPanel(
+    protected function mountProfiler(
         Request $request,
         Response $response,
-        $started = 0.0,
-        $elapsed = 0.0
-    ) {
+        float $started = 0.0,
+        float $elapsed = 0.0
+    ): Response {
         if (!$response->getBody()->isWritable()) {
             //We can't write to the stream
             return $response;
@@ -129,14 +129,17 @@ class ProfilerWrapper implements MiddlewareInterface
             }
         }
 
-        $response->getBody()->write($this->view->render('profiler:panel', [
-            'profiler'  => $this,
-            'container' => $this->container,
-            'request'   => $request,
-            'response'  => $response,
-            'started'   => $started,
-            'elapsed'   => $elapsed
-        ]));
+        $response->getBody()->write(
+        //Rendering profiler panel
+            $this->views->render('profiler:panel', [
+                'profiler'  => $this,
+                'container' => $this->container,
+                'request'   => $request,
+                'response'  => $response,
+                'started'   => $started,
+                'elapsed'   => $elapsed
+            ])
+        );
 
         return $response;
     }
@@ -145,12 +148,13 @@ class ProfilerWrapper implements MiddlewareInterface
      * Benchmarks will be returned in normalized form.
      *
      * @param float $lastEnding Last recorded time.
-     * @return array|null
+     *
+     * @return array
      */
-    public function getBenchmarks(&$lastEnding = null)
+    public function getBenchmarks(float &$lastEnding = null): array
     {
         $result = [];
-        foreach ($this->debugger->getBenchmarks() as $record => $benchmark) {
+        foreach ($this->benchmarker->getBenchmarks() as $record => $benchmark) {
             if (!isset($benchmark[self::BENCHMARK_ENDED])) {
                 //Closing continues record
                 $benchmark[self::BENCHMARK_ENDED] = microtime(true);
@@ -176,7 +180,7 @@ class ProfilerWrapper implements MiddlewareInterface
      *
      * @return array
      */
-    public function logMessages()
+    public function logMessages(): array
     {
         return $this->handler->getRecords();
     }
@@ -187,9 +191,10 @@ class ProfilerWrapper implements MiddlewareInterface
      * @param string $container
      * @param string $message
      * @param array  $context
+     *
      * @return string
      */
-    public function formatMessage($container, $message, $context)
+    public function formatMessage(string $container, string $message, array $context): string
     {
         //We have to do interpolation first
         $message = \Spiral\interpolate($message, $context);
@@ -207,9 +212,10 @@ class ProfilerWrapper implements MiddlewareInterface
      * Highlight SQL syntax.
      *
      * @param string $sql
+     *
      * @return string
      */
-    public function highlightSQL($sql)
+    public function highlightSQL(string $sql): string
     {
         \SqlFormatter::$pre_attributes = '';
 
