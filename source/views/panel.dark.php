@@ -30,8 +30,8 @@ $full = microtime(true) - SPIRAL_INITIAL_TIME;
             </div>
 
             <div id="dbg-prf-option-memory" class="option memory">
-                <span title="[[Peak usage:]] <?= \Spiral\Support\Strings::bytes(memory_get_peak_usage(true)) ?>">
-                    <?= \Spiral\Support\Strings::bytes(memory_get_usage(true)) ?>
+                <span title="[[Peak usage:]] <?= \Spiral\Support\Strings::bytes(memory_get_peak_usage()) ?>">
+                    <?= \Spiral\Support\Strings::bytes(memory_get_usage()) ?>
                 </span>
             </div>
 
