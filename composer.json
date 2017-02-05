@@ -1,6 +1,6 @@
 {
   "name": "spiral/profiler",
-  "description": "Profiler panel/middleware to manage logs, environment and benchmarks.",
+  "description": "Spiral, Profiler module",
   "authors": [
     {
       "name": "Anton Titov / Wolfy-J",
@@ -8,8 +8,8 @@
     }
   ],
   "require": {
-    "spiral/framework": "*",
-    "jdorn/sql-formatter": "*"
+    "spiral/framework": "^0.9",
+    "jdorn/sql-formatter": "^1.2"
   },
   "autoload": {
     "psr-4": {

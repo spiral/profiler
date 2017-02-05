@@ -1,4 +1,4 @@
-# Spiral Framework Profiler Middleware
+# Spiral, Profiler module
 Profiler panel/middleware for Spiral Applications
 
 ![Profiler Panel](http://spiralscout.com/public/uploads/55149ede34f37-gYW1Chm.png)
