@@ -184,7 +184,7 @@ $viewsConfig = $container->get(\Spiral\Views\Configs\ViewsConfig::class);
             $libraries = $files->normalizePath(directory('libraries'));
 
             foreach ($loader->getClasses() as $class => $filename) {
-                $filename = $files->normalizePath($filename);
+                $filename = $filename ? $files->normalizePath($filename): '~undefined~';
 
                 $color = '';
                 if (strpos($filename, $application) === 0) {
