@@ -1,5 +1,9 @@
-# Spiral, Profiler module
-Profiler panel/middleware for Spiral Applications
+Spiral, Profiler module
+=========================
+[![Latest Stable Version](https://poser.pugx.org/spiral/profiler/v/stable)](https://packagist.org/packages/spiral/profiler) 
+[![License](https://poser.pugx.org/spiral/profiler/license)](https://packagist.org/packages/spiral/profiler)
+[![Build Status](https://travis-ci.org/spiral/profiler.svg?branch=master)](https://travis-ci.org/spiral/profiler)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/spiral/profiler/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/spiral/profiler/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/spiral/profiler/badge.svg?branch=master)](https://coveralls.io/github/spiral/profiler?branch=master)
 
-![Profiler Panel](http://spiralscout.com/public/uploads/55149ede34f37-gYW1Chm.png)
-![Profiler Panel](http://spiralscout.com/public/uploads/55149eda75646-DaBaEb1.png)
+<b>[Documentation](http://spiral-framework.com/guide)</b> | [CHANGELOG](/CHANGELOG.md) | [Framework Bundle](https://github.com/spiral/spiral)
