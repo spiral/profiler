@@ -21,5 +21,11 @@
     "psr-4": {
       "Spiral\\": "source/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Spiral\\Tests\\": "tests/",
+      "TestApplication\\": "tests/-app-/classes/"
+    }
   }
 }

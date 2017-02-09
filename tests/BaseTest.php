@@ -8,8 +8,8 @@
 namespace Spiral\Tests;
 
 use Monolog\Handler\NullHandler;
+use PHPUnit\Framework\TestCase;
 use Spiral\Core\Traits\SharedTrait;
-use Spiral\Tests\Core\Fixtures\SharedComponent;
 
 /**
  * @property \Spiral\Core\MemoryInterface             $memory
@@ -22,15 +22,12 @@ use Spiral\Tests\Core\Fixtures\SharedComponent;
  * @property \Spiral\Tokenizer\TokenizerInterface     $tokenizer
  * @property \Spiral\Tokenizer\ClassesInterface       $locator
  * @property \Spiral\Tokenizer\InvocationsInterface   $invocationLocator
- * @property \Spiral\Storage\StorageInterface         $storage
  * @property \Spiral\Views\ViewManager                $views
  * @property \Spiral\Translator\Translator            $translator
  * @property \Spiral\Database\DatabaseManager         $dbal
  * @property \Spiral\ORM\ORM                          $orm
- * @property \Spiral\ODM\ODM                          $odm
  * @property \Spiral\Encrypter\EncrypterInterface     $encrypter
  * @property \Spiral\Database\Entities\Database       $db
- * @property \Spiral\ODM\Entities\MongoDatabase       $mongo
  * @property \Spiral\Http\Cookies\CookieQueue         $cookies
  * @property \Spiral\Http\Routing\RouterInterface     $router
  * @property \Spiral\Pagination\PaginatorsInterface   $paginators
@@ -43,7 +40,7 @@ use Spiral\Tests\Core\Fixtures\SharedComponent;
  * @property \Spiral\Security\ActorInterface          $actor
  * @property \Spiral\Session\SessionInterface         $session
  */
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends TestCase
 {
     use SharedTrait;
 
@@ -84,7 +81,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         clearstatcache();
 
         //Open application scope
-        SharedComponent::shareContainer($this->app->container);
+        TestApplication::shareContainer($this->app->container);
     }
 
     /**
@@ -94,7 +91,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     {
         \Mockery::close();
 
-        SharedComponent::shareContainer(null);
+        TestApplication::shareContainer(null);
 
         //Forcing destruction
         $this->app = null;

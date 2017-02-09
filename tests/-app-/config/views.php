@@ -26,7 +26,7 @@ return [
         /*
          * This is default application namespace which can be used without any prefix.
          */
-        'default' => [
+        'default'  => [
             directory("application") . 'views/',
             /*{{namespaces.default}}*/
         ],
@@ -35,9 +35,12 @@ return [
          * used in snapshots. In addition, same namespace used by Toolkit module to share it's
          * views and widgets.
          */
-        'spiral'  => [
-            directory("framework") . 'views/',
+        'spiral'   => [
+            directory("libraries") . 'spiral/framework/source/views/',
             /*{{namespaces.spiral}}*/
+        ],
+        'profiler' => [
+            directory("root") . '../../source/views/',
         ],
         /*{{namespaces}}*/
     ],

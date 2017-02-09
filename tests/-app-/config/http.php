@@ -6,7 +6,6 @@
  * @see HttpConfig
  */
 use Spiral\Http;
-use Spiral\Http\Cookies;
 use Spiral\Http\Middlewares;
 
 return [
@@ -73,12 +72,7 @@ return [
      * executed.
      */
     'middlewares'  => [
-        Middlewares\CsrfMiddleware::class,
         Middlewares\ExceptionWrapper::class,
-        Cookies\CookieManager::class,
-
-        //Session\Http\SessionStarter::class,
-
         /*{{middlewares}}*/
     ],
 

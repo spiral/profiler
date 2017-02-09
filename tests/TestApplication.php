@@ -7,6 +7,7 @@
 
 namespace Spiral\Tests;
 
+use Interop\Container\ContainerInterface;
 use Spiral\Core\Bootloaders\SpiralBindings;
 use Spiral\Core\Core;
 
@@ -44,5 +45,15 @@ class TestApplication extends Core
     protected function bootstrap()
     {
         //Nothing to do
+    }
+
+    /**
+     * @param ContainerInterface $container
+     *
+     * @return ContainerInterface|null
+     */
+    public static function shareContainer(ContainerInterface $container = null)
+    {
+        return self::staticContainer($container);
     }
 }
