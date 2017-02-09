@@ -14,14 +14,14 @@
          stderr="true"
 >
     <testsuites>
-        <testsuite name="Spiral Framework Core Tests">
+        <testsuite name="Profiler Module Tests">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory>source/Spiral</directory>
+            <directory>source/Profiler</directory>
         </whitelist>
     </filter>
 </phpunit>
