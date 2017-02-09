@@ -24,9 +24,7 @@ return [
      * ORM models still can talk between databases, however joins will become forbidden.
      */
     'aliases'     => [
-        'default'  => 'primary',
-        'database' => 'primary',
-        'db'       => 'primary',
+        'default' => 'runtime',
 
         /*{{aliases}}*/
     ],
@@ -43,10 +41,6 @@ return [
         'runtime' => [
             'connection'  => 'runtime',
             'tablePrefix' => '',
-        ],
-        'other'   => [
-            'connection'  => 'runtime',
-            'tablePrefix' => 'secondary_',
         ],
         /*{{databases}}*/
     ],

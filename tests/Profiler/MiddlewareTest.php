@@ -42,4 +42,22 @@ class MiddlewareTest extends HttpTest
         $this->assertSame(200, $result->getStatusCode());
         $this->assertContains("Spiral Environment", $result->getBody()->__toString());
     }
+
+    public function testLogging()
+    {
+        $this->http->addRoute(new Route(
+            'default',
+            '/db',
+            'TestApplication\Controllers\DefaultController:db'
+        ));
+
+        $this->app->getBootloader()->bootload([
+            ProfilerBootloader::class
+        ]);
+
+        $result = $this->get('/db');
+        $this->assertSame(200, $result->getStatusCode());
+        $this->assertContains("Spiral Environment", $result->getBody()->__toString());
+        $this->assertContains("sample_table", $result->getBody()->__toString());
+    }
 }

@@ -15,4 +15,13 @@ class DefaultController extends Controller
     {
         return "Hello, Dave.";
     }
+
+    public function dbAction()
+    {
+        $schema = $this->db->sample_table->getSchema();
+        $schema->primary('id');
+        $schema->save();
+
+        return "";
+    }
 }
