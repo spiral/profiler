@@ -13,6 +13,10 @@
     "spiral/framework": "^0.9",
     "jdorn/sql-formatter": "^1.2"
   },
+  "require-dev": {
+    "phpunit/phpunit": "~6.0",
+    "mockery/mockery": "dev-master"
+  },
   "autoload": {
     "psr-4": {
       "Spiral\\": "source/"
