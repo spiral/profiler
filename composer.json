@@ -1,5 +1,7 @@
 {
   "name": "spiral/profiler",
+  "type": "module",
+  "license": "MIT",
   "description": "Spiral, Profiler module",
   "authors": [
     {
