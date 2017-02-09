@@ -1,5 +1,6 @@
 .idea/
 composer/
+tests/-app-/runtime/
 composer.phar
 composer.lock
 clover.json
