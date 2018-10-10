@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "spiral/framework": "2.0-dev",
+    "spiral/framework": "2.0.x-dev",
     "jdorn/sql-formatter": "^1.2"
   },
   "require-dev": {
