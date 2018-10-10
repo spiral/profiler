@@ -2,7 +2,7 @@
   "name": "spiral/profiler",
   "type": "module",
   "license": "MIT",
-  "description": "Sprial: Profiler and Debug Panel",
+  "description": "Spiral: Profiler and Debug Panel",
   "authors": [
     {
       "name": "Anton Titov / Wolfy-J",
