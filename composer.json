@@ -24,10 +24,7 @@
   },
   "extra": {
     "publish": {
-      "public/*:@public/profiler": "replace",
-      "public/profiler.js:@resources/file.js": "follow",
-      "@locales/en": "ensure",
-      "@locales/ru": "ensure"
+      "public/*:@public/profiler": "replace"
     }
   }
 }
