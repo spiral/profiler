@@ -18,9 +18,8 @@
 @spiral-p-text: #e6e1dc;
 @spiral-p-border: #696969;
 
-
 // Values
-@narrowScreen : ~"screen and (max-width: 1200px)";
+@narrowScreen: ~"screen and (max-width: 1200px)";
 
 .profiler {
   font-family: 'Helvetica', sans-serif;
@@ -690,6 +689,7 @@
     }
   }
 }
+
 .dark-profiler .profiler {
   color: @spiral-p-text;
 
@@ -902,7 +902,7 @@
   .content {
     background: @spiral-p-bg;
     border: 1px solid @spiral-p-border;
-    box-shadow: 0 0 20px rgba(0,0,0,.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, .3);
 
     .close {
 
@@ -937,9 +937,9 @@
       border-collapse: collapse;
 
       th {
-        background: rgba(51,163,254,.7);
-        border: 1px solid rgba(51,163,254,.7);
-        box-shadow: inset 0 0 5px rgba(0,0,0,.2);
+        background: rgba(51, 163, 254, .7);
+        border: 1px solid rgba(51, 163, 254, .7);
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, .2);
         text-shadow: none;
 
         a {
@@ -953,11 +953,9 @@
           border-bottom: 1px solid @spiral-p-bg;
         }
 
-
-
         &.red-td {
           td {
-            background: rgba(211, 53, 53,.7);
+            background: rgba(211, 53, 53, .7);
             color: @spiral-dark;
           }
         }
@@ -965,14 +963,14 @@
         &.blue-td {
           td {
             background: rgba(111, 190, 255, .6);
-            color:@spiral-dark;
+            color: @spiral-dark;
           }
         }
 
         &.yellow-td {
           td {
-            background: rgba(255, 217, 100,.8);
-            color:@spiral-dark;
+            background: rgba(255, 217, 100, .8);
+            color: @spiral-dark;
           }
         }
 
@@ -990,15 +988,13 @@
     padding: 1px;
 
     pre {
-      background:#efefef!important;
-      box-shadow: inset 0 0 10px rgba(0,0,0,.4);
+      background: #efefef !important;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, .4);
       padding: 10px;
     }
   }
 
   .flow {
-
-
 
     .timeline {
       border-bottom: 1px solid @spiral-p-border;
@@ -1029,13 +1025,13 @@
 
       &.time-red {
         > div {
-          background: rgba(211, 53, 53,.7);
+          background: rgba(211, 53, 53, .7);
         }
       }
 
       &.time-orange {
         > div {
-          background: rgba(255, 217, 100,.8);
+          background: rgba(255, 217, 100, .8);
         }
       }
 
@@ -1086,7 +1082,6 @@
     }
   }
 
-
   .tabs-block {
     .clearfix();
 
@@ -1095,7 +1090,7 @@
       width: 20%;
       background-color: @spiral-p-bg-dark;
       padding: 10px;
-      box-shadow: inset 0 0 10px rgba(0,0,0,.5);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, .5);
 
       ul {
         margin: 0 0 20px;
@@ -1116,7 +1111,7 @@
           }
 
           &:hover {
-            background: rgba(0,0,0,.5);
+            background: rgba(0, 0, 0, .5);
           }
         }
       }
