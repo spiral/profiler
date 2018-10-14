@@ -85,4 +85,27 @@ class LogStreamTest extends TestCase
         $this->assertContains("debug", $written);
         $this->assertContains(Color::GRAY, $written);
     }
+
+
+    public function testStreamSQL()
+    {
+        $out = fopen('php://memory', 'rb+');
+
+        $stream = new LogStream($out, true);
+        $stream->__invoke(new LogEvent(
+            new \DateTime(),
+            'debug',
+            'debug',
+            "SELECT * FROM users",
+            ["query" => true]
+        ));
+
+        fseek($out, 0);
+        $written = fread($out, 1000);
+        fclose($out);
+
+        $this->assertNotEmpty($written);
+        $this->assertContains("debug", $written);
+        $this->assertContains(Color::GREEN, $written);
+    }
 }
