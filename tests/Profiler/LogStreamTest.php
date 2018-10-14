@@ -19,13 +19,6 @@ use Spiral\Profiler\LogStream;
 
 class LogStreamTest extends TestCase
 {
-    //private $file;
-
-    //public function setUp()
-    //{
-    //$this->file = fopen("out.log", "rw+");
-    //}
-
     public function testBootloader()
     {
         $b = new LogStreamBootloader();
