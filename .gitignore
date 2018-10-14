@@ -1,7 +1,6 @@
 .idea/
-composer/
-tests/-app-/runtime/
-composer.phar
+.env
 composer.lock
-clover.json
+vendor/
+*.db
 clover.xml
