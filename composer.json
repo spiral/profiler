@@ -23,10 +23,5 @@
     "psr-4": {
       "Spiral\\Profiler\\": "src/"
     }
-  },
-  "extra": {
-    "publish": {
-      "public/*:@public/profiler": "replace"
-    }
   }
 }
