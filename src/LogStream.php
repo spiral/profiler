@@ -90,11 +90,11 @@ class LogStream
             }
 
             $result .= sprintf(
-                    "[%s:%s] %s",
-                    $this->fetchChannel($event),
-                    strtoupper($event->getLevel()),
-                    $line
-                ) . "\n";
+                "[%s:%s] %s",
+                $this->fetchChannel($event),
+                strtoupper($event->getLevel()),
+                $line
+            ) . "\n";
         }
 
         return $result;
@@ -113,13 +113,13 @@ class LogStream
             }
 
             $result .= sprintf(
-                    "[%s%s%s:%s] %s",
-                    Color::LIGHT_WHITE,
-                    $this->fetchChannel($event),
-                    Color::RESET,
-                    $this->fetchLevel($event),
-                    $line
-                ) . "\n";
+                "[%s%s%s:%s] %s",
+                Color::LIGHT_WHITE,
+                $this->fetchChannel($event),
+                Color::RESET,
+                $this->fetchLevel($event),
+                $line
+            ) . "\n";
         }
 
         return $result;
@@ -149,7 +149,8 @@ class LogStream
      */
     protected function fetchLevel(LogEvent $event): string
     {
-        return sprintf("%s%s%s",
+        return sprintf(
+            "%s%s%s",
             self::COLORS[$event->getLevel()],
             strtoupper($event->getLevel()),
             Color::RESET
