@@ -22,7 +22,7 @@
     "spiral/core": "^3.0",
     "spiral/debug": "^3.0",
     "spiral/hmvc": "^3.0",
-    "spiral/logger": "^3.0",
+    "spiral/logger": "^3.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",
