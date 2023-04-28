@@ -39,6 +39,7 @@ protected const LOAD = [
 Define env variables:
 
 ```dotenv
+PROFILER_ENABLE=true
 PROFILER_ENDPOINT=http://127.0.0.1:8080/api/profiler/store
 PROFILER_APP_NAME=My super app
 ```
