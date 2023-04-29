@@ -36,8 +36,8 @@ final class ProfilerBootloaderTest extends TestCase
         yield [0, NullStorage::class];
         yield ['', NullStorage::class];
         yield ['false', NullStorage::class];
-        yield [null, NullStorage::class];
         // enable
+        yield [null, WebStorage::class];
         yield [true, WebStorage::class];
         yield [1, WebStorage::class];
         yield ['true', WebStorage::class];
@@ -62,7 +62,6 @@ final class ProfilerBootloaderTest extends TestCase
         yield [0, NullDriver::class];
         yield ['', NullDriver::class];
         yield ['false', NullDriver::class];
-        yield [null, NullDriver::class];
     }
 
     /**
