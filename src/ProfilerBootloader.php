@@ -34,7 +34,7 @@ final class ProfilerBootloader extends Bootloader
 
     private function createDriver(EnvironmentInterface $env): DriverInterface
     {
-        if (!$env->get('PROFILER_ENABLE', false)) {
+        if (!$env->get('PROFILER_ENABLE', true)) {
             return new NullDriver();
         }
         return DriverFactory::detect();
