@@ -23,7 +23,7 @@ final class ProfilerBootloader extends Bootloader
 
     private function createStorage(EnvironmentInterface $env): StorageInterface
     {
-        if (!$env->get('PROFILER_ENABLE', false)) {
+        if (!$env->get('PROFILER_ENABLE', true)) {
             return new NullStorage();
         }
         return new WebStorage(
