@@ -19,8 +19,8 @@ final class ProfilerInterceptor implements CoreInterceptorInterface
     public function __construct(
         private readonly FactoryInterface $factory,
         private readonly ContainerInterface $container,
-        private readonly DispatcherInterface $dispatcher,
-        private readonly EnvironmentInterface $env
+        private readonly EnvironmentInterface $env,
+        private readonly ?DispatcherInterface $dispatcher = null
     ) {
     }
 
@@ -42,7 +42,7 @@ final class ProfilerInterceptor implements CoreInterceptorInterface
             $tags = \array_merge($state->getTags(), [
                 'controller' => $controller,
                 'action' => $action,
-                'dispatcher' => $this->dispatcher::class,
+                'dispatcher' => $this->dispatcher ? $this->dispatcher::class : null,
             ]);
 
             $profiler->end($tags);

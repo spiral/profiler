@@ -21,8 +21,8 @@ final class ProfilerMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly FactoryInterface $factory,
         private readonly ContainerInterface $container,
-        private readonly DispatcherInterface $dispatcher,
-        private readonly EnvironmentInterface $env
+        private readonly EnvironmentInterface $env,
+        private readonly ?DispatcherInterface $dispatcher = null,
     ) {
     }
 
@@ -44,7 +44,7 @@ final class ProfilerMiddleware implements MiddlewareInterface
             $tags = \array_merge($state->getTags(), [
                 'route' => $request->getAttribute('route.name'),
                 'uri' => (string)$request->getUri(),
-                'dispatcher' => $this->dispatcher::class,
+                'dispatcher' => $this->dispatcher ? $this->dispatcher::class : null,
             ]);
 
             $profiler->end($tags);
