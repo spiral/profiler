@@ -16,6 +16,8 @@ use SpiralPackages\Profiler\Profiler;
 
 final class ProfilerInterceptor implements CoreInterceptorInterface
 {
+    private bool $alreadyStarted = false;
+
     public function __construct(
         private readonly FactoryInterface $factory,
         private readonly ContainerInterface $container,
@@ -26,6 +28,12 @@ final class ProfilerInterceptor implements CoreInterceptorInterface
 
     public function process(string $controller, string $action, array $parameters, CoreInterface $core): mixed
     {
+        if ($this->alreadyStarted) {
+            return $core->callAction($controller, $action, $parameters);
+        }
+
+        $this->alreadyStarted = true;
+
         $profiler = $this->factory->make(Profiler::class, [
             'appName' => $this->env->get('PROFILER_APP_NAME', 'Spiral'),
         ]);
@@ -46,6 +54,7 @@ final class ProfilerInterceptor implements CoreInterceptorInterface
             ]);
 
             $profiler->end($tags);
+            $this->alreadyStarted = false;
         }
     }
 }

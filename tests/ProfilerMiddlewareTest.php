@@ -44,17 +44,14 @@ final class ProfilerMiddlewareTest extends TestCase
 
     private function mockProfiler(): object
     {
-        return new class() {
-
+        return new class () {
             public function __construct(
                 public array $tagsList = []
-            )
-            {
+            ) {
             }
 
             public function start(array $ignoredFunctions = []): void
             {
-
             }
 
             public function end(array $tags = []): array
@@ -63,6 +60,5 @@ final class ProfilerMiddlewareTest extends TestCase
                 return [];
             }
         };
-
     }
 }
