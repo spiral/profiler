@@ -42,19 +42,50 @@ final class ProfilerInterceptorTest extends TestCase
         self::assertNull($tags['dispatcher']);
     }
 
+    /**
+     * If ProfilerInterceptor::process calls several times the only top call starts and ends profiler.
+     */
+    public function testOnlyOneNestedStartEnd(): void
+    {
+        $profiler = $this->mockProfiler();
+
+        $factory = $this->createMock(FactoryInterface::class);
+        $factory->method('make')->willReturn($profiler);
+
+        $container = $this->createMock(ContainerInterface::class);
+        $container->method('has')->willReturn(false);
+
+        $interceptor = new ProfilerInterceptor(
+            $factory,
+            $container,
+            $this->createMock(EnvironmentInterface::class),
+        );
+
+        $i = 10;
+        $core = $this->createMock(CoreInterface::class);
+        $core
+            ->method('callAction')
+            ->willReturnCallback(function () use ($interceptor, $core, &$i) {
+                if ($i-- === 0) {
+                    return null;
+                }
+                return $interceptor->process("foo$i", "bar$i", [], $core);
+            });
+        $interceptor->process('foo', 'bar', [], $core);
+        // $profiler->start and $profiler->end must be called once
+        self::assertCount(1, $profiler->tagsList);
+    }
+
     private function mockProfiler(): object
     {
-        return new class() {
-
+        return new class () {
             public function __construct(
                 public array $tagsList = []
-            )
-            {
+            ) {
             }
 
             public function start(array $ignoredFunctions = []): void
             {
-
             }
 
             public function end(array $tags = []): array
@@ -63,6 +94,5 @@ final class ProfilerInterceptorTest extends TestCase
                 return [];
             }
         };
-
     }
 }
