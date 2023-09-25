@@ -41,7 +41,8 @@ Define env variables:
 ```dotenv
 PROFILER_ENABLE=true
 PROFILER_ENDPOINT=http://127.0.0.1:8080/api/profiler/store
-PROFILER_APP_NAME=My super app
+PROFILER_APP_NAME="My super app"
+PROFILER_MIDDLEWARE_DEFAULT_ENABLED=true
 ```
 
 ## Usage
@@ -159,3 +160,15 @@ class HomeController implements SingletonInterface
     }
 }
 ```
+
+#### Profiling strategy.
+
+By default, middleware start profiling on every request. Н
+You can configure profiling to be enabled only for certain requests.
+
+1. Set env variable PROFILER_MIDDLEWARE_DEFAULT_ENABLED to false.
+```dotenv
+PROFILER_MIDDLEWARE_DEFAULT_ENABLED=false
+```
+
+2. Pass Http header `X-Spiral-Profiler-Enable=1` for request you want to profile.
