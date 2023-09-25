@@ -6,10 +6,14 @@ namespace Spiral\Profiler\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Spiral\Boot\Environment;
 use Spiral\Boot\EnvironmentInterface;
 use Spiral\Core\CoreInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Profiler\ProfilerInterceptor;
+use Spiral\Profiler\ProfilerMiddleware;
 
 /**
  * @coversDefaultClass \Spiral\Profiler\ProfilerMiddleware
@@ -29,13 +33,14 @@ final class ProfilerMiddlewareTest extends TestCase
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturn(false);
 
-        $interceptor = new ProfilerInterceptor(
+        $middleware = new ProfilerMiddleware(
             $factory,
             $container,
-            $this->createMock(EnvironmentInterface::class),
+            new Environment()
         );
-        $core = $this->createMock(CoreInterface::class);
-        $interceptor->process('foo', 'bar', [], $core);
+        $request = $this->createMock(ServerRequestInterface::class);
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $middleware->process($request, $handler);
 
         self::assertCount(1, $profiler->tagsList);
         self::assertArrayHasKey('dispatcher', $tags = $profiler->tagsList[0]);
