@@ -18,6 +18,8 @@ use SpiralPackages\Profiler\Profiler;
 
 final class ProfilerMiddleware implements MiddlewareInterface
 {
+    public const HEADER = 'X-Spiral-Profiler-Enable';
+
     public function __construct(
         private readonly FactoryInterface $factory,
         private readonly ContainerInterface $container,
@@ -28,6 +30,10 @@ final class ProfilerMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        if (!$this->isEnabled($request)) {
+            return $handler->handle($request);
+        }
+
         $profiler = $this->factory->make(Profiler::class, [
             'appName' => $this->env->get('PROFILER_APP_NAME', 'Spiral'),
         ]);
@@ -49,5 +55,13 @@ final class ProfilerMiddleware implements MiddlewareInterface
 
             $profiler->end($tags);
         }
+    }
+
+    private function isEnabled(ServerRequestInterface $request): bool
+    {
+        if ($request->hasHeader(self::HEADER)) {
+            return \filter_var($request->getHeaderLine(self::HEADER), FILTER_VALIDATE_BOOLEAN);
+        }
+        return !!$this->env->get('PROFILER_MIDDLEWARE_DEFAULT_ENABLED', true);
     }
 }
